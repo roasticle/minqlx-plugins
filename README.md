@@ -5,6 +5,6 @@
 - once that's up you can add: qlx_intermissionSound "soundpath" (same format as pak, or you can use a base pak sound) to your server cfg and you are good to go!
 
 <strong>slaphappy.py</strong> - minqlx-plugin for spam slapping pesky players!
-- usage: !slaphappy <id> <number of slaps> <frequency in seconds> [damage] (damage is optional)
+- usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
 Enjoy! :D - roasticle (roast on quakenet IRC)
