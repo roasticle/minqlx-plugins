@@ -1,5 +1,6 @@
 import minqlx
 import threading
+import time
 
 class slaphappy(minqlx.Plugin):
 
@@ -55,7 +56,16 @@ class slaphappy(minqlx.Plugin):
         def slapper():
             self.slap(target_player, dmg)
 
-        channel.reply("^2SLAPHAPPY ACTIVATED ON: ^6{}^7 !!!".format(target_player.name))
-        do_every(slap_frequency, slapper, slap_amount)
+        channel.reply("^2SLAPHAPPY ACTIVATED ON: ^6{}^7 !!! IN...".format(target_player.name))
+
+        #Countdown timer
+        @minqlx.thread
+        def countdown():
+            for i in range(5, 0, -1):
+                channel.reply("^1" + str(i) + "..")
+                time.sleep(1)
+            do_every(slap_frequency, slapper, slap_amount)
+
+        countdown()
 
         return minqlx.RET_STOP_ALL
