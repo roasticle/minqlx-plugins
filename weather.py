@@ -48,7 +48,6 @@ class weather(minqlx.Plugin):
                             channel.reply("^2" + "More than one result (must be specific to one location)")
                         else:
                             if 'error' in response:
-                                channel.reply(query_string)
                                 channel.reply("^2" + response["error"]["description"])
             except requests.exceptions.RequestException as e:
                 self.logger.info("ERROR: {}".format(e))
