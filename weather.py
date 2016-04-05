@@ -20,7 +20,7 @@ class weather(minqlx.Plugin):
         @minqlx.thread
         def get_weather():
             try:
-                r = requests.get("http://api.wunderground.com/api/" + api_key + "/geolookup/conditions/forecast/q/" + str(msg[1]) + ".json")
+                r = requests.get("http://api.wunderground.com/api/" + api_key + "/geolookup/conditions/forecast/q/" + str(msg[1]).replace(" ", "") + ".json")
                 r.raise_for_status()
                 r = r.json()
                 if 'location' in r:
