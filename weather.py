@@ -20,7 +20,13 @@ class weather(minqlx.Plugin):
         @minqlx.thread
         def get_weather():
             try:
-                r = requests.get("http://api.wunderground.com/api/" + api_key + "/geolookup/conditions/forecast/q/" + str(msg[1]).replace(" ", "") + ".json")
+                query_string = ""
+                #Concatenate all parameters called (!weather msg1 msg2..etc)
+                for i in range(1, len(msg)):
+                    query_string += str(msg[i])
+
+                query_string.replace(" ", "") #remove spaces
+                r = requests.get("http://api.wunderground.com/api/" + api_key + "/geolookup/conditions/forecast/q/" + query_string + ".json")
                 r.raise_for_status()
                 r = r.json()
                 if 'location' in r:
@@ -42,6 +48,7 @@ class weather(minqlx.Plugin):
                             channel.reply("^2" + "More than one result (must be specific to one location)")
                         else:
                             if 'error' in response:
+                                channel.reply(query_string)
                                 channel.reply("^2" + response["error"]["description"])
             except requests.exceptions.RequestException as e:
                 self.logger.info("ERROR: {}".format(e))
