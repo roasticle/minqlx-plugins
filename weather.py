@@ -4,7 +4,7 @@ import requests
 class weather(minqlx.Plugin):
 
     def __init__(self):
-        self.add_command("weather", self.cmd_weather, usage="<postal or zip code>")
+        self.add_command("weather", self.cmd_weather, usage="<postal or zip code> or <countryname or state/city>")
         self.set_cvar_once("qlx_WeatherUndergroundKey", "")
 
     def cmd_weather(self, player, msg, channel):
@@ -36,7 +36,13 @@ class weather(minqlx.Plugin):
                         forecast = r["forecast"]["txt_forecast"]["forecastday"][0]["fcttext_metric"]
                     channel.reply("^2{}, {}, {} ^5Current Temp: ^6{}, {}, ^5Wind: ^6{}, ^5Forecast: ^6{}".format(city, state, country, temp, weather, wind, forecast))
                 else:
-                    channel.reply("No weather results!")
+                    if 'response' in r:
+                        response = r["response"]
+                        if 'results' in response:
+                            channel.reply("^2" + "More than one result (must be specific to one location)")
+                        else:
+                            if 'error' in response:
+                                channel.reply("^2" + response["error"]["description"])
             except requests.exceptions.RequestException as e:
                 self.logger.info("ERROR: {}".format(e))
 
