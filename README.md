@@ -1,4 +1,4 @@
-?<strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
+?<strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsize lower than player limit that causes bots to spec (kicks them)
 
 <strong>intermission.py</strong> - triggers a sound/music at each game end
 - add intermission to your server.cfg minqlx plugins
