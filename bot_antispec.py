@@ -1,16 +1,15 @@
 import minqlx
-import time
 
 class bot_antispec(minqlx.Plugin):
     def __init__(self):
-        super().__init__()
-        self.add_hook("player_connect", self.handle_player_connect, priority=minqlx.PRI_LOWEST)
+        self.add_hook("player_connect", self.handle_player_connect)
 
-    @minqlx.thread
     def handle_player_connect(self, player):
-        if(str(player.steam_id)[0] == "9"):
-            time.sleep(5)
-            for p in self.teams()['spectator']:
-                if(str(p.steam_id)[0] == "9"):
-                    self.kick(p)
-
+        #Need to delay 2 second to allow bot to connect and go into spec or else a bot setup error or kick loop will occur
+        @minqlx.delay(2)
+        def delayed_thing():
+            if(str(player.steam_id)[0] == "9"): #bot steam id's start with a 9
+                for p in self.teams()['spectator']:
+                    if(str(p.steam_id)[0] == "9"):
+                        self.kick(p)
+        delayed_thing()
