@@ -1,3 +1,5 @@
+?<strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to go into spectator (kicks them)
+
 <strong>intermission.py</strong> - triggers a sound/music at each game end
 - add intermission to your server.cfg minqlx plugins
 - if you want a custom sound/music other than those included in the base paks, you can add a custom workshop item with the sound. It needs to be in mono OGG or WAV format and the pak structure is /sound/customsoundfolder/sound.ogg (or wav).
