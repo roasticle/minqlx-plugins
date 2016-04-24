@@ -10,6 +10,6 @@ class bot_antispec(minqlx.Plugin):
         def delayed_thing():
             if(str(player.steam_id)[0] == "9"): #bot steam id's start with a 9
                 for p in self.teams()['spectator']:
-                    if(str(p.steam_id)[0] == "9"):
+                    if player.steam_id == p.steam_id:
                         self.kick(p)
         delayed_thing()
