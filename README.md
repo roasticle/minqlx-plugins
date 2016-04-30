@@ -6,6 +6,11 @@
 - see: https://steamcommunity.com/sharedfiles/filedetails/?id=539821860 for info on uploading your custom pak to the workshop.
 - once that's up you can add: qlx_intermissionSound "soundpath" (same format as pak, or you can use a base pak sound) to your server cfg and you are good to go!
 
+<strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
+- intended for servers with no end-game map voting
+- announces nextmap at end of game or on !nextmap
+- optionally set cvar qlx_nextmap_no-repeat "1" - this prevents the nextmap from being the same as the current map
+
 <strong>slaphappy.py</strong> - spam slap pesky players!
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
