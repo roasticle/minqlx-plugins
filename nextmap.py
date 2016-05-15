@@ -4,6 +4,7 @@ import random
 class nextmap(minqlx.Plugin):
 
     def __init__(self):
+        self.plugin_updater_url = "https://raw.githubusercontent.com/roasticle/minqlx-plugins/master/nextmap.py"
         self.add_command("nextmap", self.cmd_nextmap)
         self.add_hook("game_start", self.handle_game_start)
         self.add_hook("game_end", self.handle_game_end)
