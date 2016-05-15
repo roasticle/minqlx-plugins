@@ -1,5 +1,7 @@
 import minqlx
 
+PLUGIN_UPDATER_URL = "https://raw.githubusercontent.com/roasticle/minqlx-plugins/master/bot_antispec.py"
+
 class bot_antispec(minqlx.Plugin):
     def __init__(self):
         self.add_hook("player_connect", self.handle_player_connect)
