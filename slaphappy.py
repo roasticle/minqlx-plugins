@@ -5,6 +5,7 @@ import time
 class slaphappy(minqlx.Plugin):
 
     def __init__(self):
+        self.plugin_updater_url = "https://raw.githubusercontent.com/roasticle/minqlx-plugins/master/slaphappy.py"
         self.add_command("slaphappy", self.cmd_slaphappy, 2, usage="<id> <number of slaps> <frequency in seconds> [damage]")
 
     def cmd_slaphappy(self, player, msg, channel):
