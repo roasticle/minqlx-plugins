@@ -20,7 +20,7 @@ class plugin_updater(minqlx.Plugin):
     @minqlx.thread
     def cmd_update(self):
         try:
-            enabled_plugins = self.get_cvar("qlx_plugins")
+            enabled_plugins = self.get_cvar("qlx_plugins").replace("plugin_updater", "")
             plugin_status = dict()
             #Loop through plugins user has enabled in qlx_plugins cvar and get latest version parsed from useful plugins wiki
             for plugin in enabled_plugins.split(','):
@@ -28,8 +28,10 @@ class plugin_updater(minqlx.Plugin):
 
                 if plugin:
                     #check if plugin has plugin_updater_url variable set (this URL should have the plugin's raw .py)
+                    plugin_updater_url = None
+
                     try: plugin_updater_url = self.plugins[plugin].plugin_updater_url
-                    except: plugin_updater_url = None
+                    except: pass
 
                     if plugin_updater_url:
                         res = requests.get(plugin_updater_url)
