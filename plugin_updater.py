@@ -18,7 +18,7 @@ class plugin_updater(minqlx.Plugin):
                 p.tell(message)
 
     @minqlx.thread
-    def cmd_update(self):
+    def cmd_update(self, player = None, msg = None, channel = None):
         try:
             enabled_plugins = self.get_cvar("qlx_plugins").replace("plugin_updater", "")
             plugin_status = dict()
