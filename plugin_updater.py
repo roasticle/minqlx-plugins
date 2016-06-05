@@ -22,7 +22,7 @@ class plugin_updater(minqlx.Plugin):
         try:
             enabled_plugins = self.get_cvar("qlx_plugins").replace("plugin_updater", "")
             plugin_status = dict()
-            #Loop through plugins user has enabled in qlx_plugins cvar and get latest version parsed from useful plugins wiki
+            #Loop through plugins user has enabled in qlx_plugins cvar
             for plugin in enabled_plugins.split(','):
                 plugin = plugin.strip();
 
