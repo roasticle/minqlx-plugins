@@ -4,7 +4,6 @@ import requests
 class weather(minqlx.Plugin):
 
     def __init__(self):
-        self.plugin_updater_url = "https://raw.githubusercontent.com/roasticle/minqlx-plugins/master/weather.py"
         self.add_command("weather", self.cmd_weather, usage="<postal or zip code> or <countryname or state/city>")
         self.set_cvar_once("qlx_WeatherUndergroundKey", "")
 
