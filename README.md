@@ -11,11 +11,6 @@
 - announces nextmap at end of game or on !nextmap
 - optionally set cvar qlx_nextmap_no-repeat "1" - this prevents the nextmap from being the same as the current map
 
-<strong>plugin_updater.py</strong> - a...plugin updater!
-- updates any non-base plugins with plugin updater support
-- admins type !plugin_updater to run or set qlx_plugin_updater_auto "1" in config for automatic updates
-- plugin authors add: eg - self.plugin_updater_url = "https://raw.githubusercontent.com/roasticle/minqlx-plugins/master/bot_antispec.py" to your __init__ (this must be a raw py link!)
-
 <strong>slaphappy.py</strong> - spam slap pesky players!
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
