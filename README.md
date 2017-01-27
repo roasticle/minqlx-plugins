@@ -1,11 +1,5 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
 
-<strong>intermission.py</strong> - triggers a sound/music at each game end
-- add intermission to your server.cfg minqlx plugins
-- if you want a custom sound/music other than those included in the base paks, you can add a custom workshop item with the sound. It needs to be in mono OGG or WAV format and the pak structure is /sound/customsoundfolder/sound.ogg (or wav).
-- see: https://steamcommunity.com/sharedfiles/filedetails/?id=539821860 for info on uploading your custom pak to the workshop.
-- once that's up you can add: qlx_intermissionSound "soundpath" (same format as pak, or you can use a base pak sound) to your server cfg and you are good to go!
-
 <strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
 - intended for servers with no end-game map voting
 - announces nextmap at end of game or on !nextmap
