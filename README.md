@@ -1,5 +1,12 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
 
+<strong>gungames.py</strong> - custom voting triggers for gungames factories
+- this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
+- if vote passes will reload current map with voted factory
+- !gungames to show all available options
+- available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns
+
+
 <strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
 - intended for servers with no end-game map voting
 - announces nextmap at end of game or on !nextmap
