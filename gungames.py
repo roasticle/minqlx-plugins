@@ -55,7 +55,7 @@ class gungames(minqlx.Plugin):
         self.msg("{}^7 called a vote.".format(caller.name))
 
     def cmd_bfgs(self, caller, msg, channel):
-        self.callvote("map " + self.get_cvar("mapname") + " bfg-ffa", "rockets only")
+        self.callvote("map " + self.get_cvar("mapname") + " bfg-ffa", "bfg only")
         self.msg("{}^7 called a vote.".format(caller.name))
 
     def cmd_nails(self, caller, msg, channel):
