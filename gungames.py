@@ -22,7 +22,6 @@ class gungames(minqlx.Plugin):
         self.msg("^1Gungames: ^5!glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns")
 
     def cmd_glovelove(self, caller, msg, channel):
-        self.msg(msg)
         self.callvote("map " + self.get_cvar("mapname") + " guantlets-ffa", "guantlet only")
         self.msg("{}^7 called a vote.".format(caller.name))
 
