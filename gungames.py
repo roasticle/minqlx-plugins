@@ -17,9 +17,11 @@ class gungames(minqlx.Plugin):
         self.add_command("nails", self.cmd_nails)
         self.add_command("mines", self.cmd_mines)
         self.add_command("chainguns", self.cmd_chainguns)
+        self.add_command("hmg", self.cmd_hmg)
+        self.add_command("kami", self.cmd_kami)
 
     def cmd_gungames(self, player, msg, channel):
-        self.msg("^1Gungames: ^5!glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns")
+        self.msg("^1Gungames: ^5!glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami")
 
     def cmd_glovelove(self, caller, msg, channel):
         self.callvote("map " + self.get_cvar("mapname") + " guantlets-ffa", "guantlet only")
@@ -67,4 +69,12 @@ class gungames(minqlx.Plugin):
 
     def cmd_chainguns(self, caller, msg, channel):
         self.callvote("map " + self.get_cvar("mapname") + " chain-ffa", "chainguns only")
+        self.msg("{}^7 called a vote.".format(caller.name))
+
+    def cmd_hmg(self, caller, msg, channel):
+        self.callvote("map " + self.get_cvar("mapname") + " hmg-ffa", "hmg only")
+        self.msg("{}^7 called a vote.".format(caller.name))
+
+    def cmd_kami(self, caller, msg, channel):
+        self.callvote("map " + self.get_cvar("mapname") + " kami-ffa", "kamikaze only")
         self.msg("{}^7 called a vote.".format(caller.name))
