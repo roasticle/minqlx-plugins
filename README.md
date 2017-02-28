@@ -4,7 +4,8 @@
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
 - !gungames to show all available options
-- available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns
+- available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami
+- note: just added hmg and kami, you will need to update the workshop item as well for them to work
 
 
 <strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
