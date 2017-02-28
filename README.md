@@ -19,7 +19,7 @@
 <strong>weather.py</strong> - lets you check weather and forecast in-game!
 - you will need an API key (free) from https://www.wunderground.com/weather/api/d/login.html
 - set qlx_WeatherUndergroundKey "YOURAPIKEYHERE" in your server.cfg
-- usage: !weather (postal or zip code) or (countryname or state/city> - eg. !weather M4S1C4, !weather 90210, !weather USA/newyork, !weather CA/losangeles
+- usage: !weather (postal or zip code) or (countryname or state/city> - eg. !weather M4S1C4, !weather 90210, !weather USA/newyork, !weather CA/losangeles, !weather vostok, antarctica - using postal or zip code is usually best as it prevents multiple locations from being found (no data gets returned).
 
 Enjoy! :D - roasticle (roast on quakenet IRC). Donations are appreciated :)
 
