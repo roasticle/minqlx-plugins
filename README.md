@@ -1,5 +1,8 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
 
+<strong>gravityfixer.py</strong> - restores gravity to normal after maps with custom gravity
+- you will need to set qlx_alternateGravityMaps "mapname1,mapname2,etc" for each map that has an alternate gravity set
+
 <strong>gungames.py</strong> - custom voting triggers for gungames factories
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
