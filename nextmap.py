@@ -1,40 +1,40 @@
 import minqlx
-import random
 
 class nextmap(minqlx.Plugin):
 
     def __init__(self):
+        self.mappool_index = 0
+
+        #COMMANDS
         self.add_command("nextmap", self.cmd_nextmap)
+        self.add_command("currentmap", self.cmd_current_map)
+
+        #HOOKS
         self.add_hook("game_start", self.handle_game_start)
         self.add_hook("game_end", self.handle_game_end)
-        self.set_cvar_once("qlx_nextmap_no-repeat", "")
 
+    #CMD/TRIGGER FUNCTIONS
     def cmd_nextmap(self, player, msg, channel):
-        nextmap_string = self.get_nextmap()
-        if nextmap_string: self.msg("^1Next map: ^2{}".format(nextmap_string))
-        else: self.msg("^Next map is not set.")
+        if self.game.state == "warmup":
+            self.msg("^1Next map is not set until match starts!")
+        else:
+            self.msg("^1Next map: ^2{}".format(self.get_cvar("nextmap").replace("map ", "")))
+
+    def cmd_current_map(self, player, msg, channel):
+        self.msg("^1Current map: ^2{}".format("{} {}".format(self.get_cvar("mapname"), self.get_cvar("g_factory"))))
+
+    #HOOK FUNCTIONS
+    def handle_game_start(self, *args, **kwargs):
+        mappool = [ [k,v] for k, v in self.plugins['essentials'].mappool.items() ] #get mappool as a list
+
+        if self.mappool_index == len(mappool): #at end of mappool list, return to start index
+            self.mappool_index = 0
+
+        if mappool[self.mappool_index][0] == self.get_cvar("mapname"): #don't allow nextmap to be the same as current
+            self.mappool_index += 1
+
+        self.set_cvar("nextmap", "map {} {}".format(mappool[self.mappool_index][0], mappool[self.mappool_index][1][0])) #0 is map name, 1[0] is factory (ffa,etc)
+        self.mappool_index += 1
 
     def handle_game_end(self, *args, **kwargs):
-        nextmap_string = self.get_nextmap()
-        if nextmap_string: self.msg("^1Next map: ^2{}".format(nextmap_string))
-
-    def handle_game_start(self, *args, **kwargs):
-        if self.get_cvar("qlx_nextmap_no-repeat"):
-            #Check if nextmap is the same as the current map, if so, we need to pick a new map from mappool
-            nextmap = self.get_nextmap()
-            if nextmap == "{} {}".format(self.get_cvar("mapname"), self.get_cvar("g_factory")):
-                new_nextmap = self.get_random_map(nextmap)
-                self.set_cvar("nextmap", "map {}".format(new_nextmap))
-
-    def get_nextmap(self):
-        return self.get_cvar("nextmap").replace("map ", "")
-
-    def get_random_map(self, nextmap):
-        mappool = self.plugins['essentials'].mappool
-        map_name = random.choice(list(mappool))
-        factory = mappool.get(map_name)[0]
-        new_nextmap = "{} {}".format(map_name, factory)
-        #If new nextmap is the same as the current nextmap, we need to get another random map until we find a different one (the joys of "random"!)
-        while new_nextmap == nextmap:
-            new_nextmap = self.get_random_map(nextmap)
-        return new_nextmap
+        self.msg("^1Next map: ^2{}".format(self.get_cvar("nextmap").replace("map ", "")))
