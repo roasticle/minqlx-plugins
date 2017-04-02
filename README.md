@@ -12,9 +12,9 @@
 
 
 <strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
-- intended for servers with no end-game map voting
+- NOTE: intended for servers with no end-game map voting
 - announces nextmap at end of game or on !nextmap
-- optionally set cvar qlx_nextmap_no-repeat "1" - this prevents the nextmap from being the same as the current map
+- !currentmap to show..current map! (mind blowing i know!)
 
 <strong>slaphappy.py</strong> - spam slap pesky players!
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
