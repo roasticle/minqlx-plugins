@@ -28,7 +28,6 @@ class nextmap(minqlx.Plugin):
         @minqlx.delay(2)
         def delayed_thing():
             mappool = [ [k,v] for k, v in self.plugins['essentials'].mappool.items() ] #get mappool as a list
-            self.msg(mappool)
 
             if self.mappool_index == len(mappool): #at end of mappool list, return to start index
                 self.mappool_index = 0
@@ -36,7 +35,6 @@ class nextmap(minqlx.Plugin):
             if mappool[self.mappool_index][0] == self.get_cvar("mapname"): #don't allow nextmap to be the same as current
                 self.mappool_index += 1
 
-            self.msg(self.mappool_index)
             self.set_cvar("nextmap", "map {} {}".format(mappool[self.mappool_index][0], mappool[self.mappool_index][1][0])) #0 is map name, 1[0] is factory (ffa,etc)
             self.mappool_index += 1
         delayed_thing()
