@@ -5,16 +5,26 @@ import time
 class slaphappy(minqlx.Plugin):
 
     def __init__(self):
+        self.game_ended = False
         self.add_command("slaphappy", self.cmd_slaphappy, 2, usage="<id> <number of slaps> <frequency in seconds> [damage]")
+        self.add_hook("new_game", self.handle_new_game)
+        self.add_hook("game_end", self.handle_game_end)
+
+    def handle_new_game(self, *args, **kwargs):
+        self.game_ended = False
+
+    def handle_game_end(self, *args, **kwargs):
+        self.game_ended = True
 
     def cmd_slaphappy(self, player, msg, channel):
         def do_every(interval, worker_func, iterations=0):
-            if iterations != 1:
-                threading.Timer(
-                    interval,
-                    do_every, [interval, worker_func, 0 if iterations == 0 else iterations-1]
-                ).start()
-            worker_func()
+            if not self.game_ended:
+                if iterations != 1:
+                    threading.Timer(
+                        interval,
+                        do_every, [interval, worker_func, 0 if iterations == 0 else iterations-1]
+                    ).start()
+                worker_func()
 
         if len(msg) < 4:
             return minqlx.RET_USAGE
@@ -56,13 +66,14 @@ class slaphappy(minqlx.Plugin):
         def slapper():
             self.slap(target_player, dmg)
 
-        channel.reply("^2SLAPHAPPY ACTIVATED ON: ^6{}^7 !!! IN...".format(target_player.name))
+        self.center_print("^2SLAPHAPPY ACTIVATED ON: ^6{}^7 !!! IN...".format(target_player.name))
 
         #Countdown timer
+        @minqlx.delay(2)
         @minqlx.thread
         def countdown():
             for i in range(5, 0, -1):
-                channel.reply("^1" + str(i) + "..")
+                self.center_print("^1" + str(i) + "..")
                 time.sleep(1)
             do_every(slap_frequency, slapper, slap_amount)
 
