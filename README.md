@@ -10,6 +10,17 @@
 - available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami
 - note: just added hmg and kami, you will need to update the workshop item as well for them to work
 
+<strong>mapoo.py</strong> - allows multiple mappool files that change automatically based on player number
+- the mappool files should be all located in your baseq3 folder
+- threshold variables are the number of players (in-game not spec) at which the mappool gets activated
+- this requires 6 cvars to be set
+- For example:
+- set qlx_mapoo_small_file "mappool_ffa_small.txt"
+- set qlx_mapoo_medium_file "mappool_ffa_medium.txt"
+- set qlx_mapoo_large_file "mappool_ffa_large.txt"
+- set qlx_mapoo_small_threshhold "1"
+- set qlx_mapoo_medium_threshhold "6"
+- set qlx_mapoo_large_threshhold "13"
 
 <strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
 - NOTE: intended for servers with no end-game map voting
