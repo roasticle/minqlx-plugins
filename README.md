@@ -1,5 +1,9 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
 
+<strong>duke.py</strong> - Duke Nukem sound triggers
+- requires http://steamcommunity.com/sharedfiles/filedetails/?id=572453229
+- use !duke for random sound or !duke <soundname> (without .wav at the end).. list of sounds is on workshop page
+
 <strong>gravityfixer.py</strong> - restores gravity to normal after maps with custom gravity
 - in your server.cfg you will need to set qlx_alternateGravityMaps "mapname1,mapname2,etc" for each map that has an alternate gravity set 
 
