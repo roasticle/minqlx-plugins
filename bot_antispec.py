@@ -2,7 +2,7 @@ import minqlx
 
 class bot_antispec(minqlx.Plugin):
     def __init__(self):
-        self.add_hook("player_connect", self.handle_player_connect, , priority=minqlx.PRI_HIGHEST)
+        self.add_hook("player_connect", self.handle_player_connect, priority=minqlx.PRI_HIGHEST)
 
     def handle_player_connect(self, player):
         #Need to delay 2 second to allow bot to connect and go into spec or else a bot setup error or kick loop will occur
