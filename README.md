@@ -1,4 +1,8 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
+<strong>discordbot.py</strong> - announce server stats to your Discord server!
+- qlx_discord_channel_id and qlx_discord_bot_token MUST be set for this to work
+- see https://github.com/Just-Some-Bots/MusicBot/wiki/FAQ for creating the bot and also follow enabling developer mode
+- once developer mode is enabled, right click on your Discord channel and copy id - use this for qlx_discord_channel_id
 
 <strong>duke.py</strong> - Duke Nukem sound triggers
 - requires http://steamcommunity.com/sharedfiles/filedetails/?id=572453229
