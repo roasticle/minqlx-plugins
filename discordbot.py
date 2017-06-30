@@ -26,10 +26,8 @@ class discordbot(minqlx.Plugin):
 
         if not self.discord_channel_id:
             self.msg("^3You need to set qlx_discord_channel_id.")
-            return minqlx.RET_STOP_ALL
         elif not self.discord_bot_token:
             self.msg("^3You need to set qlx_discord_bot_token.")
-            return minqlx.RET_STOP_ALL
         else:
             stats_timer()
 
