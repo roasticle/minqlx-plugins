@@ -38,10 +38,15 @@ class discordbot(minqlx.Plugin):
 
         if end_game:
             game_ended_text = " - **Game Ended!**"
+            
+        if len(self.teams()['blue']):
+            max_players_ingame = int(self.game.teamsize) * 2
+        else:
+            max_players_ingame = self.game.teamsize
 
         content = "{} - ".format(self.game.hostname)
         content += "**Map:** {} ({}) - ".format(self.game.map_title, self.game.map)
-        content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.teams()['free']), self.game.teamsize, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
+        content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.players()), max_players_ingame, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
         content += self.player_data()
 
         #content += " [Join server](steam://connect/{}:{})".format(self.server_ip, self.get_cvar("net_port")) #markdown isnt currently working in discord :|
