@@ -1,6 +1,7 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
 
 <strong>discordbot.py</strong> - announce server stats to your Discord server!
+- example output: https://i.gyazo.com/d52607e54225419f4ed61e3789b68181.png
 - qlx_discord_channel_id and qlx_discord_bot_token MUST be set for this to work
 - see https://github.com/Just-Some-Bots/MusicBot/wiki/FAQ for creating the bot and also follow enabling developer mode
 - once developer mode is enabled, right click on your Discord channel and copy id - use this for qlx_discord_channel_id
@@ -17,7 +18,6 @@
 - if vote passes will reload current map with voted factory
 - !gungames to show all available options
 - available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami
-- note: just added hmg and kami, you will need to update the workshop item as well for them to work
 
 <strong>mapoo.py</strong> - allows multiple mappool files that change automatically based on player number
 - the mappool files should be all located in your baseq3 folder
