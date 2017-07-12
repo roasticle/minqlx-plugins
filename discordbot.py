@@ -67,8 +67,6 @@ class discordbot(minqlx.Plugin):
 
         self.last_message_id = json.loads(last_message.text)['id']
 
-        return
-
     def handle_game_end(self, *args, **kwargs):
         self.send_stats(True)
 
