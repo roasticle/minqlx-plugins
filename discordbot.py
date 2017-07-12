@@ -38,19 +38,24 @@ class discordbot(minqlx.Plugin):
 
         if end_game:
             game_ended_text = " - **Game Ended!**"
-            
-        if len(self.teams()['blue']):
-            max_players_ingame = int(self.game.teamsize) * 2
-        else:
-            max_players_ingame = self.game.teamsize
 
         content = "{} - ".format(self.game.hostname)
         content += "**Map:** {} ({}) - ".format(self.game.map_title, self.game.map)
-        content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.players()), max_players_ingame, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
+        content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.teams()['free']), self.game.teamsize, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
         content += self.player_data()
 
         #content += " [Join server](steam://connect/{}:{})".format(self.server_ip, self.get_cvar("net_port")) #markdown isnt currently working in discord :|
         content += " steam://connect/{}:{}".format(self.server_ip, self.get_cvar("net_port"))
+
+        #handle last message deletion after server restarts
+        if not self.last_message_id:
+            last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
+                                            headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
+            last_50_messages = json.loads(last_50_messages.text)
+
+            for message in last_50_messages:
+                if self.game.hostname in message["content"]:
+                    self.last_message_id = message["id"]
 
         if self.last_message_id:
             requests.delete("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages/" + self.last_message_id,
@@ -61,6 +66,8 @@ class discordbot(minqlx.Plugin):
                                     headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
 
         self.last_message_id = json.loads(last_message.text)['id']
+
+        return
 
     def handle_game_end(self, *args, **kwargs):
         self.send_stats(True)
