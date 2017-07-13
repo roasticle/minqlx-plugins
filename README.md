@@ -3,6 +3,7 @@
 <strong>discordbot.py</strong> - announce server stats to your Discord server!
 - example output: https://i.gyazo.com/d52607e54225419f4ed61e3789b68181.png
 - qlx_discord_channel_id and qlx_discord_bot_token MUST be set for this to work
+- you also need to authenticate the bot with a gateway at least once for it to be able to send messages - for instance using https://github.com/roasticle/QLStats-Discord-Minimal - after it auths with the gateway once, you don't need to use the bot php script anymore
 - see https://github.com/Just-Some-Bots/MusicBot/wiki/FAQ for creating the bot and also follow enabling developer mode
 - once developer mode is enabled, right click on your Discord channel and copy id - use this for qlx_discord_channel_id
 
