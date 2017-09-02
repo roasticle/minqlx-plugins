@@ -95,7 +95,7 @@ class discordbot(minqlx.Plugin):
                                         headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
         last_message = json.loads(last_message.text)
 
-        if last_message[0]["author"]["username"] != "allah-bot" and self.last_polled_message_id != last_message[0]["id"]:
+        if self.last_polled_message_id != last_message[0]["id"]:
             self.msg("^5(DC) ^3{}: ^7{}".format(last_message[0]["author"]["username"], last_message[0]["content"]))
             self.last_polled_message_id = last_message[0]["id"]
 
