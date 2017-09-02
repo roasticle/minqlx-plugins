@@ -32,6 +32,10 @@
 - set qlx_mapoo_medium_threshhold "6"
 - set qlx_mapoo_large_threshhold "13"
 
+<strong>motd.py</strong> - an alternate motd plugin that allows multiple motd/welcome sounds
+- replace the default motd.py with this file
+- add your motd sounds to the MOTD_SOUNDS list in the file
+
 <strong>nextmap.py</strong> - announce nextmap and fix nextmap repeats
 - NOTE: intended for servers with no end-game map voting
 - announces nextmap at end of game or on !nextmap
