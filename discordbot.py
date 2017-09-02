@@ -10,19 +10,29 @@ class discordbot(minqlx.Plugin):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         self.set_cvar_once("qlx_discord_channel_id", "")
+        self.set_cvar_once("qlx_discord_chat_channel_id", "")
         self.set_cvar_once("qlx_discord_bot_token", "")
 
         self.server_ip = s.getsockname()[0]
         self.last_message_id = ""
+        self.last_polled_message_id = ""
         self.discord_channel_id = self.get_cvar("qlx_discord_channel_id")
+        self.discord_chat_channel_id = self.get_cvar("qlx_discord_chat_channel_id")
         self.discord_bot_token = self.get_cvar("qlx_discord_bot_token")
 
         self.add_hook("game_end", self.handle_game_end)
+        self.add_hook("chat", self.handle_chat)
+
+        if self.discord_chat_channel_id:
+            def poll_discord_messages_timer():
+                threading.Timer(1, poll_discord_messages_timer).start()
+                self.poll_discord_messages()
+            poll_discord_messages_timer()
 
         @minqlx.delay(20)
         def stats_timer():
-                threading.Timer(180, stats_timer).start()
-                self.send_stats()
+            threading.Timer(180, stats_timer).start()
+            self.send_stats()
 
         if not self.discord_channel_id:
             self.msg("^3You need to set qlx_discord_channel_id.")
@@ -42,20 +52,18 @@ class discordbot(minqlx.Plugin):
         content = "{} - ".format(self.game.hostname)
         content += "**Map:** {} ({}) - ".format(self.game.map_title, self.game.map)
         content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.teams()['free']), self.game.teamsize, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
-        content += self.player_data()
-
-        #content += " [Join server](steam://connect/{}:{})".format(self.server_ip, self.get_cvar("net_port")) #markdown isnt currently working in discord :|
+        content += self.player_data()      
         content += " steam://connect/{}:{}".format(self.server_ip, self.get_cvar("net_port"))
 
-        #handle last message deletion after server restarts
-        if not self.last_message_id:
-            last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
-                                            headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-            last_50_messages = json.loads(last_50_messages.text)
+        #handle last message deletion
+        #if not self.last_message_id:
+        last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
+                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
+        last_50_messages = json.loads(last_50_messages.text)
 
-            for message in last_50_messages:
-                if self.game.hostname in message["content"]:
-                    self.last_message_id = message["id"]
+        for message in last_50_messages:
+            if self.game.hostname in message["content"]:
+                self.last_message_id = message["id"]
 
         if self.last_message_id:
             requests.delete("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages/" + self.last_message_id,
@@ -67,8 +75,29 @@ class discordbot(minqlx.Plugin):
 
         self.last_message_id = json.loads(last_message.text)['id']
 
+
     def handle_game_end(self, *args, **kwargs):
         self.send_stats(True)
+
+    #Sends chat to discord channel if set
+    @minqlx.thread
+    def handle_chat(self, player, msg, channel):
+        if self.discord_chat_channel_id:
+            content = "**{}**: {}".format(self.clean_text(player.name), msg)
+            requests.post("https://discordapp.com/api/channels/" +  self.discord_chat_channel_id + "/messages",
+                                        data=json.dumps({'content': content}),
+                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
+
+    #Polls discord chat for new messages if set and relays message in-game
+    @minqlx.thread
+    def poll_discord_messages(self):
+        last_message = requests.get("https://discordapp.com/api/channels/" +  self.discord_chat_channel_id + "/messages?limit=1",
+                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
+        last_message = json.loads(last_message.text)
+
+        if last_message[0]["author"]["username"] != "allah-bot" and self.last_polled_message_id != last_message[0]["id"]:
+            self.msg("^5(DC) ^3{}: ^7{}".format(last_message[0]["author"]["username"], last_message[0]["content"]))
+            self.last_polled_message_id = last_message[0]["id"]
 
     def player_data(self, *args, **kwargs):
         player_data = ""
