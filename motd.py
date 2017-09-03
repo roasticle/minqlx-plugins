@@ -18,6 +18,7 @@
 
 import minqlx
 import minqlx.database
+import random
 
 MOTD_SET_KEY = "minqlx:motd"
 
@@ -44,7 +45,6 @@ class motd(minqlx.Plugin):
         # homepath doesn't change runtime, so we can just save it for the sake of efficiency.
         self.home = self.get_cvar("fs_homepath")
         self.motd_key = MOTD_SET_KEY + ":{}".format(self.home)
-        self.index = 0
 
         # Add this server to the MOTD set.
         self.db.sadd(MOTD_SET_KEY, self.home)
@@ -66,21 +66,12 @@ class motd(minqlx.Plugin):
         
         if not MOTD_SOUNDS: return
 
-        # If last time the index was incremented too high, loop around
-        if self.index == len(MOTD_SOUNDS):
-            self.index = 0
-
         # Try to play sound file
         try:
-            for p in self.players():
-                if self.db.get_flag(p, "essentials:sounds_enabled", default=True):
-                    super().play_sound(MOTD_SOUNDS[self.index], p)
+            if self.db.get_flag(player, "essentials:sounds_enabled", default=True):
+                    super().play_sound(random.choice(MOTD_SOUNDS), player)
         except Exception as e:
             self.msg("^1Error: ^7{}".format(e))
-
-        # Increase the counter so next round the next sound will be played
-        self.index += 1
-
 
         self.send_motd(player, motd)
 
