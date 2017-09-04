@@ -15,6 +15,9 @@
 <strong>gravityfixer.py</strong> - restores gravity to normal after maps with custom gravity
 - in your server.cfg you will need to set qlx_alternateGravityMaps "mapname1,mapname2,etc" for each map that has an alternate gravity set 
 
+<strong>endstats.py</strong> - various stats given at end of game
+- example output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
+
 <strong>gungames.py</strong> - custom voting triggers for gungames factories
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
