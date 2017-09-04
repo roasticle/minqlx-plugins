@@ -123,8 +123,7 @@ class endstats(minqlx.Plugin):
                     if len(self.most_pummels_names) > 1 and len(self.most_pummels_names) - 1 != i:
                         stats_output += ", "
                 stats_output += "^2 - {}".format(self.most_pummels)
-
-            self.msg(stats_output)
+                self.msg(stats_output)
 
             stats_output = "^6BIGGEST PINCUSHION: "
             for i, player_name in enumerate(self.most_dmg_taken_names):
