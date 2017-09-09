@@ -27,7 +27,7 @@ class discordbot(minqlx.Plugin):
             def poll_discord_messages_timer():
                 threading.Timer(1, poll_discord_messages_timer).start()
                 self.poll_discord_messages()
-            poll_discord_messages_timer()
+            #poll_discord_messages_timer()
 
         @minqlx.delay(20)
         def stats_timer():
@@ -43,7 +43,6 @@ class discordbot(minqlx.Plugin):
 
     @minqlx.thread
     def send_stats(self, end_game = False):
-
         game_ended_text = ""
 
         if end_game:
@@ -52,14 +51,16 @@ class discordbot(minqlx.Plugin):
         content = "{} - ".format(self.game.hostname)
         content += "**Map:** {} ({}) - ".format(self.game.map_title, self.game.map)
         content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.teams()['free']), self.game.teamsize, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
-        content += self.player_data()      
+        content += self.player_data()
+
         content += " steam://connect/{}:{}".format(self.server_ip, self.get_cvar("net_port"))
 
         #handle last message deletion
-        #if not self.last_message_id:
-        last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
+        if not self.last_message_id:
+            last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
                                         headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-        last_50_messages = json.loads(last_50_messages.text)
+            self.msg(last_50_messages.text)
+            last_50_messages = json.loads(last_50_messages.text)
 
         for message in last_50_messages:
             if self.game.hostname in message["content"]:
@@ -75,6 +76,9 @@ class discordbot(minqlx.Plugin):
 
         self.last_message_id = json.loads(last_message.text)['id']
 
+        #this is roasty custom, not part of public! :P
+        if self.human_count_in_game() <= 1 and self.game.type != "Duel":
+            self.set_cvar("bot_minplayers", 5)
 
     def handle_game_end(self, *args, **kwargs):
         self.send_stats(True)
@@ -95,7 +99,7 @@ class discordbot(minqlx.Plugin):
                                         headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
         last_message = json.loads(last_message.text)
 
-        if self.last_polled_message_id != last_message[0]["id"]:
+        if last_message[0]["author"]["username"] != "allah-bot" and self.last_polled_message_id != last_message[0]["id"]:
             self.msg("^5(DC) ^3{}: ^7{}".format(last_message[0]["author"]["username"], last_message[0]["content"]))
             self.last_polled_message_id = last_message[0]["id"]
 
