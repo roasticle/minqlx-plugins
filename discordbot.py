@@ -14,8 +14,6 @@ class discordbot(minqlx.Plugin):
         self.set_cvar_once("qlx_discord_bot_token", "")
 
         self.server_ip = s.getsockname()[0]
-        self.last_message_id = ""
-        self.last_polled_message_id = ""
         self.discord_channel_id = self.get_cvar("qlx_discord_channel_id")
         self.discord_chat_channel_id = self.get_cvar("qlx_discord_chat_channel_id")
         self.discord_bot_token = self.get_cvar("qlx_discord_bot_token")
@@ -49,30 +47,19 @@ class discordbot(minqlx.Plugin):
 
         content += " steam://connect/{}:{}".format(self.server_ip, self.get_cvar("net_port"))
 
-        #handle last message deletion
-        if not self.last_message_id:
-            last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
-                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-            self.msg(last_50_messages.text)
-            last_50_messages = json.loads(last_50_messages.text)
+        last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
+                                    headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
+        last_50_messages = json.loads(last_50_messages.text)
 
+        #remove previous status message if it's not a game end status (content would contain hostname)
         for message in last_50_messages:
-            if self.game.hostname in message["content"]:
-                self.last_message_id = message["id"]
-
-        if self.last_message_id:
-            requests.delete("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages/" + self.last_message_id,
+            if self.game.hostname in message["content"] and "**Game Ended!**" not in message["content"]:
+                requests.delete("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages/" + message["id"],
                              headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
 
-        last_message = requests.post("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
+        requests.post("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
                                     data=json.dumps({'content': content}),
                                     headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-
-        self.last_message_id = json.loads(last_message.text)['id']
-
-        #this is roasty custom, not part of public! :P
-        if self.human_count_in_game() <= 1 and self.game.type != "Duel":
-            self.set_cvar("bot_minplayers", 5)
 
     def handle_game_end(self, *args, **kwargs):
         self.send_stats(True)
