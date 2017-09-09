@@ -1,141 +1,150 @@
 import minqlx
-import requests
-import json
-import threading
-import socket
+import time
 
-class discordbot(minqlx.Plugin):
+class endstats(minqlx.Plugin):
 
     def __init__(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        self.set_cvar_once("qlx_discord_channel_id", "")
-        self.set_cvar_once("qlx_discord_chat_channel_id", "")
-        self.set_cvar_once("qlx_discord_bot_token", "")
-
-        self.server_ip = s.getsockname()[0]
-        self.last_message_id = ""
-        self.last_polled_message_id = ""
-        self.discord_channel_id = self.get_cvar("qlx_discord_channel_id")
-        self.discord_chat_channel_id = self.get_cvar("qlx_discord_chat_channel_id")
-        self.discord_bot_token = self.get_cvar("qlx_discord_bot_token")
-
+        self.add_hook("stats", self.handle_stats)
         self.add_hook("game_end", self.handle_game_end)
-        self.add_hook("chat", self.handle_chat)
 
-        if self.discord_chat_channel_id:
-            def poll_discord_messages_timer():
-                threading.Timer(1, poll_discord_messages_timer).start()
-                self.poll_discord_messages()
-            #poll_discord_messages_timer()
+        self.best_kpm_names = []
+        self.best_kpm = 0
 
-        @minqlx.delay(20)
-        def stats_timer():
-            threading.Timer(180, stats_timer).start()
-            self.send_stats()
+        self.best_kd_names = []
+        self.best_kd = 0
 
-        if not self.discord_channel_id:
-            self.msg("^3You need to set qlx_discord_channel_id.")
-        elif not self.discord_bot_token:
-            self.msg("^3You need to set qlx_discord_bot_token.")
-        else:
-            stats_timer()
+        self.most_damage_names = []
+        self.most_damage = 0
 
+        self.most_pummels_names = []
+        self.most_pummels = 0
+
+        self.most_dmg_taken_names = []
+        self.most_dmg_taken = 0
+
+    def handle_stats(self, stats):
+        if stats['TYPE'] == "PLAYER_STATS": #these stats come at end of game after MATCH_REPORT
+            if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0:
+                player_name = stats['DATA']['NAME']
+
+                if stats['DATA']['PLAY_TIME'] > 0:
+                    player_kpm = stats['DATA']['KILLS'] / (stats['DATA']['PLAY_TIME'] / 60)
+                else:
+                    player_kpm = 0
+
+                if stats['DATA']['DEATHS'] != 0: #we don't want to divide by 0!
+                    player_kd = stats['DATA']['KILLS'] / stats['DATA']['DEATHS']
+                else:
+                    player_kd = stats['DATA']['KILLS']
+
+                player_pummels = stats['DATA']['WEAPONS']['GAUNTLET']['K']
+                player_dmg = stats['DATA']['DAMAGE']['DEALT']
+                player_dmg_taken = stats['DATA']['DAMAGE']['TAKEN']
+
+                if not self.best_kpm_names:
+                    self.best_kpm_names = [player_name]
+                    self.best_kpm = player_kpm
+                elif player_kpm > self.best_kpm:
+                    self.best_kpm_names = [player_name]
+                    self.best_kpm = player_kpm
+                elif player_kpm == self.best_kpm:
+                    self.best_kpm_names.append(player_name)
+
+                if not self.best_kd_names:
+                    self.best_kd_names = [player_name]
+                    self.best_kd = player_kd
+                elif player_kd > self.best_kd:
+                    self.best_kd_names = [player_name]
+                    self.best_kd = player_kd
+                elif player_kd == self.best_kd:
+                    self.best_kd_names.append(player_name)
+
+                if not self.most_damage_names:
+                    self.most_damage_names = [player_name]
+                    self.most_damage = player_dmg
+                elif player_dmg > self.most_damage:
+                    self.most_damage_names = [player_name]
+                    self.most_damage = player_dmg
+                elif player_dmg == self.most_damage:
+                    self.most_damage_names.append(player_name)
+
+                if not self.most_pummels_names:
+                    self.most_pummels_names = [player_name]
+                    self.most_pummels = player_pummels
+                elif player_pummels > self.most_pummels:
+                    self.most_pummels_names = [player_name]
+                    self.most_pummels = player_pummels
+                elif player_pummels == self.most_pummels:
+                    self.most_pummels_names.append(player_name)
+                    
+                if not self.most_dmg_taken_names:
+                    self.most_dmg_taken_names = [player_name]
+                    self.most_dmg_taken = player_dmg_taken
+                elif player_dmg_taken > self.most_dmg_taken:
+                    self.most_dmg_taken_names = [player_name]
+                    self.most_dmg_taken = player_dmg_taken
+                elif player_dmg_taken == self.most_dmg_taken:
+                    self.most_dmg_taken_names.append(player_name)    
+
+    @minqlx.delay(1)
     @minqlx.thread
-    def send_stats(self, end_game = False):
-        game_ended_text = ""
-
-        if end_game:
-            game_ended_text = " - **Game Ended!**"
-
-        content = "{} - ".format(self.game.hostname)
-        content += "**Map:** {} ({}) - ".format(self.game.map_title, self.game.map)
-        content += "**Players:** {}\{} ({} bots - {} spec){}\n".format(len(self.teams()['free']), self.game.teamsize, self.bot_count_in_game(), len(self.teams()['spectator']), game_ended_text)
-        content += self.player_data()
-
-        content += " steam://connect/{}:{}".format(self.server_ip, self.get_cvar("net_port"))
-
-        #handle last message deletion
-        if not self.last_message_id:
-            last_50_messages = requests.get("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
-                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-            self.msg(last_50_messages.text)
-            last_50_messages = json.loads(last_50_messages.text)
-
-        for message in last_50_messages:
-            if self.game.hostname in message["content"]:
-                self.last_message_id = message["id"]
-
-        if self.last_message_id:
-            requests.delete("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages/" + self.last_message_id,
-                             headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-
-        last_message = requests.post("https://discordapp.com/api/channels/" +  self.discord_channel_id + "/messages",
-                                    data=json.dumps({'content': content}),
-                                    headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-
-        self.last_message_id = json.loads(last_message.text)['id']
-
-        #this is roasty custom, not part of public! :P
-        if self.human_count_in_game() <= 1 and self.game.type != "Duel":
-            self.set_cvar("bot_minplayers", 5)
-
     def handle_game_end(self, *args, **kwargs):
-        self.send_stats(True)
+        if self.most_damage: #avoids stats on aborts (picked arbitrary stat)
+            stats_output = "^1MOST KILLS/MIN: "
+            for i, player_name in enumerate(self.best_kpm_names):
+                stats_output += "^7" + player_name
+                if len(self.best_kpm_names) > 1 and len(self.best_kpm_names) - 1 != i:
+                    stats_output += ", "
+            stats_output += "^2 - {:0.2f}".format(self.best_kpm)
+            self.msg(stats_output)
 
-    #Sends chat to discord channel if set
-    @minqlx.thread
-    def handle_chat(self, player, msg, channel):
-        if self.discord_chat_channel_id:
-            content = "**{}**: {}".format(self.clean_text(player.name), msg)
-            requests.post("https://discordapp.com/api/channels/" +  self.discord_chat_channel_id + "/messages",
-                                        data=json.dumps({'content': content}),
-                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
+            stats_output = "^1BEST K/D RATIO: "
+            for i, player_name in enumerate(self.best_kd_names):
+                stats_output += "^7" + player_name
+                if len(self.best_kd_names) > 1 and len(self.best_kd_names) - 1 != i:
+                    stats_output += ", "
+            stats_output += "^2 - {:0.2f}".format(self.best_kd)
+            self.msg(stats_output)
 
-    #Polls discord chat for new messages if set and relays message in-game
-    @minqlx.thread
-    def poll_discord_messages(self):
-        last_message = requests.get("https://discordapp.com/api/channels/" +  self.discord_chat_channel_id + "/messages?limit=1",
-                                        headers = {'Content-type': 'application/json', 'Authorization': 'Bot ' + self.discord_bot_token})
-        last_message = json.loads(last_message.text)
+            stats_output = "^1MOST DAMAGE: "
+            for i, player_name in enumerate(self.most_damage_names):
+                stats_output += "^7" + player_name
+                if len(self.most_damage_names) > 1 and len(self.most_damage_names) - 1 != i:
+                    stats_output += ", "
+            stats_output += "^2 - {:,}".format(self.most_damage)
 
-        if last_message[0]["author"]["username"] != "allah-bot" and self.last_polled_message_id != last_message[0]["id"]:
-            self.msg("^5(DC) ^3{}: ^7{}".format(last_message[0]["author"]["username"], last_message[0]["content"]))
-            self.last_polled_message_id = last_message[0]["id"]
+            self.msg(stats_output)
+            time.sleep(3)
 
-    def player_data(self, *args, **kwargs):
-        player_data = ""
-        players_by_score = sorted(self.teams()['free'] + self.teams()['blue'] + self.teams()['red'], key=lambda k: k.score, reverse=True)[:5] #get top 5 players list!
+            if self.most_pummels > 0:
+                stats_output = "^1MOST PUMMELS: "
+                for i, player_name in enumerate(self.most_pummels_names):
+                    stats_output += "^7" + player_name
+                    if len(self.most_pummels_names) > 1 and len(self.most_pummels_names) - 1 != i:
+                        stats_output += ", "
+                stats_output += "^2 - {}".format(self.most_pummels)
+                self.msg(stats_output)
 
-        for p in players_by_score:
-            player_time = 0
-            if self.game.state == "in_progress":
-                player_time = int(p.stats.time / 60000)
-            player_data += "**{}**: {} ({}m)- ".format(self.clean_text(p.name), p.score, player_time)
+            stats_output = "^6BIGGEST PINCUSHION: "
+            for i, player_name in enumerate(self.most_dmg_taken_names):
+                stats_output += "^7" + player_name
+                if len(self.most_dmg_taken_names) > 1 and len(self.most_dmg_taken_names) - 1 != i:
+                    stats_output += ", "
+            stats_output += "^2 - {:,} ^6dmg taken".format(self.most_dmg_taken)
 
-        return player_data
+            self.msg(stats_output)
 
-    def bot_count_in_game(self, *args, **kwargs):
-        bot_count_in_game = 0
+        self.best_kpm_names = []
+        self.best_kpm = 0
 
-        for p in self.teams()['free'] + self.teams()['blue'] + self.teams()['red']:
-            if(str(p.steam_id)[0] == "9"): # a bot
-                bot_count_in_game += 1
+        self.best_kd_names = []
+        self.best_kd = 0
 
-        if self.human_count_in_game() >= 5: #handles cases when bots haven't been kicked yet when loading new maps
-            bot_count_in_game = 0
+        self.most_damage_names = []
+        self.most_damage = 0
 
-        return bot_count_in_game
+        self.most_pummels_names = []
+        self.most_pummels = 0
 
-    def human_count_in_game(self, *args, **kwargs):
-        human_count_in_game = 0
-
-        for p in self.teams()['free'] + self.teams()['blue'] + self.teams()['red']:
-            if(str(p.steam_id)[0] != "9"): # a human!
-                human_count_in_game += 1
-
-        return human_count_in_game
-
-
-
-
+        self.most_dmg_taken_names = []
+        self.most_dmg_taken = 0
