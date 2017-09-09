@@ -6,6 +6,7 @@
 - you also need to authenticate the bot with a gateway at least once for it to be able to send messages - for instance using https://github.com/roasticle/QLStats-Discord-Minimal - after it auths with the gateway once, you don't need to use the bot php script anymore
 - see https://github.com/Just-Some-Bots/MusicBot/wiki/FAQ for creating the bot and also follow enabling developer mode
 - once developer mode is enabled, right click on your Discord channel and copy id - use this for qlx_discord_channel_id
+- optional cvar discord_chat_channel_id - this will output chat to the discord channel with the channel id specified
 
 <strong>duke.py</strong> - Duke Nukem sound triggers
 - requires http://steamcommunity.com/sharedfiles/filedetails/?id=572453229
