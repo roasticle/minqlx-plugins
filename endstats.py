@@ -199,6 +199,9 @@ class endstats(minqlx.Plugin):
         self.most_damage_names = []
         self.most_damage = 0
 
+        self.longest_spree_names = []
+        self.longest_spree = 0
+
         self.most_pummels_names = []
         self.most_pummels = 0
 
