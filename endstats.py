@@ -34,7 +34,7 @@ class endstats(minqlx.Plugin):
     def handle_stats(self, stats):
         if stats['TYPE'] == "PLAYER_DEATH" and self.game.state == "in_progress" and stats['DATA']['MOD'] in self.world_death_types:
             if stats['DATA']['VICTIM']['NAME'] not in self.world_death_stats:
-                self.world_death_stats.update({stats['DATA']['VICTIM']['NAME'] : 1})
+                self.world_death_stats[stats['DATA']['VICTIM']['NAME']] = 1
             else:
                 self.world_death_stats[stats['DATA']['VICTIM']['NAME']] += 1
 
@@ -175,10 +175,10 @@ class endstats(minqlx.Plugin):
                 if not self.most_world_deaths_names:
                     self.most_world_deaths_names = [name]
                     self.most_world_deaths = world_deaths
-                elif player_kpm > self.most_world_deaths:
+                elif world_deaths > self.most_world_deaths:
                     self.most_world_deaths_names = [name]
                     self.most_world_deaths = world_deaths
-                elif player_kpm == self.most_world_deaths:
+                elif world_deaths == self.most_world_deaths:
                     self.most_world_deaths_names.append(name)
 
             if self.most_world_deaths > 0:
