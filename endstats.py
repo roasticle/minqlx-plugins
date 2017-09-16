@@ -20,6 +20,12 @@ class endstats(minqlx.Plugin):
         self.longest_spree_names = []
         self.longest_spree = 0
 
+        self.most_impressives_names = []
+        self.most_impressives = 0
+        
+        self.most_headshots_names = []
+        self.most_headshots = 0
+
         self.most_pummels_names = []
         self.most_pummels = 0
 
@@ -54,7 +60,9 @@ class endstats(minqlx.Plugin):
                     player_kd = stats['DATA']['KILLS']
                 player_dmg = stats['DATA']['DAMAGE']['DEALT']
                 
-                player_longest_spree = stats['DATA']['MAX_STREAK'] 
+                player_longest_spree = stats['DATA']['MAX_STREAK']
+                player_impressives = stats['DATA']['MEDALS']['IMPRESSIVE']
+                player_headshots = stats['DATA']['MEDALS']['HEADSHOT']
                 player_pummels = stats['DATA']['WEAPONS']['GAUNTLET']['K']                
                 player_dmg_taken = stats['DATA']['DAMAGE']['TAKEN']
 
@@ -92,7 +100,25 @@ class endstats(minqlx.Plugin):
                     self.longest_spree_names = [player_name]
                     self.longest_spree = player_longest_spree
                 elif player_longest_spree == self.longest_spree:
-                    self.longest_spree_names.append(player_name)    
+                    self.longest_spree_names.append(player_name)   
+                
+                if not self.most_impressives_names:
+                    self.most_impressives_names = [player_name]
+                    self.most_impressives = player_impressives
+                elif player_impressives > self.most_impressives:
+                    self.most_impressives_names = [player_name]
+                    self.most_impressives = player_impressives
+                elif player_impressives == self.most_impressives:
+                    self.most_impressives_names.append(player_name)
+
+                if not self.most_headshots_names:
+                    self.most_headshots_names = [player_name]
+                    self.most_headshots = player_headshots
+                elif player_headshots > self.most_headshots:
+                    self.most_headshots_names = [player_name]
+                    self.most_headshots = player_headshots
+                elif player_headshots == self.most_headshots:
+                    self.most_headshots_names.append(player_name)                    
 
                 if not self.most_pummels_names:
                     self.most_pummels_names = [player_name]
@@ -151,6 +177,26 @@ class endstats(minqlx.Plugin):
                 stats_output += "^2 - {} kill streak".format(self.longest_spree)
                 self.msg(stats_output)
 
+            if self.most_impressives > 0:
+                stats_output = "^1LASER EYES: "
+                for i, player_name in enumerate(self.most_impressives_names):
+                    stats_output += "^7" + player_name
+                    if len(self.most_impressives_names) > 1 and len(self.most_impressives_names) - 1 != i:
+                        stats_output += ", "
+                stats_output += "^2 - {} impressives".format(self.most_impressives)
+                self.msg(stats_output)
+                
+            if self.most_headshots > 0:
+                stats_output = "^1HEADHUNTER: "
+                for i, player_name in enumerate(self.most_headshots_names):
+                    stats_output += "^7" + player_name
+                    if len(self.most_headshots_names) > 1 and len(self.most_headshots_names) - 1 != i:
+                        stats_output += ", "
+                stats_output += "^2 - {} headshots".format(self.most_headshots)
+                self.msg(stats_output)                
+
+            time.sleep(2)
+
             if self.most_pummels > 0:
                 stats_output = "^1PUMMEL LORD: "
                 for i, player_name in enumerate(self.most_pummels_names):
@@ -167,8 +213,6 @@ class endstats(minqlx.Plugin):
                     stats_output += ", "
             stats_output += "^2 - {:,} ^6dmg taken".format(self.most_dmg_taken)
             self.msg(stats_output)
-
-            time.sleep(2)
 
             stats_output = "^6CLUMSIEST FOOL: "
             for name, world_deaths in self.world_death_stats.items():
@@ -201,6 +245,12 @@ class endstats(minqlx.Plugin):
 
         self.longest_spree_names = []
         self.longest_spree = 0
+
+        self.most_impressives_names = []
+        self.most_impressives = 0
+
+        self.most_headshots_names = []
+        self.most_headshots = 0
 
         self.most_pummels_names = []
         self.most_pummels = 0
