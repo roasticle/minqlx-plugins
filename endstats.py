@@ -110,16 +110,7 @@ class endstats(minqlx.Plugin):
                     self.best_rail_accuracy_names = [player_name]
                     self.best_rail_accuracy = player_rail_accuracy
                 elif player_rail_accuracy == self.best_rail_accuracy:
-                    self.best_rail_accuracy_names.append(player_name)                    
-                
-                if not self.most_headshots_names:
-                    self.most_headshots_names = [player_name]
-                    self.most_headshots = player_headshots
-                elif player_headshots > self.most_headshots:
-                    self.most_headshots_names = [player_name]
-                    self.most_headshots = player_headshots
-                elif player_headshots == self.most_headshots:
-                    self.most_headshots_names.append(player_name)                    
+                    self.best_rail_accuracy_names.append(player_name)
 
                 if not self.most_pummels_names:
                     self.most_pummels_names = [player_name]
