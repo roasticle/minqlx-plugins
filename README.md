@@ -15,7 +15,7 @@
 <strong>gravityfixer.py</strong> - restores gravity to normal after maps with custom gravity
 - in your server.cfg you will need to set qlx_alternateGravityMaps "mapname1,mapname2,etc" for each map that has an alternate gravity set 
 
-<strong>endstats.py</strong> - various stats given at end of game in chat
+<strong>endstats.py</strong> - various stat awards given at end of game
 - example output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
 
 <strong>gungames.py</strong> - custom voting triggers for gungames factories
@@ -47,6 +47,10 @@
 
 <strong>slaphappy.py</strong> - spam slap pesky players!
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
+
+<strong>weaponspawnfixer.py</strong> - override map-forced weapon spawn times
+- will set all weapon spawn times to whatever g_weaponrespawn is set to
+- for such maps as almostlost (5s grenade launcher), heroskeep (5s rocket launcher), verticalvengeance (10s railgun i think?) and bitterembrace (10s on all weapons..wtf?).. so for example g_weaponrespawn 1 would set all those respawn times to 1s instead :)
 
 <strong>weather.py</strong> - lets you check weather and forecast in-game!
 - you will need an API key (free) from https://www.wunderground.com/weather/api/d/login.html
