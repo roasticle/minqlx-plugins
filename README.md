@@ -49,7 +49,7 @@
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
 <strong>weaponspawnfixer.py</strong> - override map-forced weapon spawn times
-- *REQUIRES* at least minqlx 0.5.1
+- <strong>REQUIRES</strong> at least minqlx 0.5.1
 - will set all weapon spawn times to whatever g_weaponrespawn is set to
 - for such maps as almostlost (5s grenade launcher), heroskeep (5s rocket launcher), verticalvengeance (10s railgun i think?) and bitterembrace (10s on all weapons..wtf?).. so for example g_weaponrespawn 1 would set all those respawn times to 1s instead :)
 
