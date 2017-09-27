@@ -19,9 +19,9 @@ class gungames(minqlx.Plugin):
         self.add_command("chainguns", self.cmd_chainguns)
         self.add_command("hmg", self.cmd_hmg)
         self.add_command("kami", self.cmd_kami)
-        self.add_command("haste", self.cmd_kami)
+        self.add_command("haste", self.cmd_haste)
 
-        self.add_hook("player_spawn", self.player_spawn)
+        self.add_hook("player_spawn", self.handle_player_spawn)
 
     def cmd_gungames(self, player, msg, channel):
         self.msg("^1Gungames: ^5!glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami !haste")
