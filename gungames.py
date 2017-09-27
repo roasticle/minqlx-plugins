@@ -19,9 +19,12 @@ class gungames(minqlx.Plugin):
         self.add_command("chainguns", self.cmd_chainguns)
         self.add_command("hmg", self.cmd_hmg)
         self.add_command("kami", self.cmd_kami)
+        self.add_command("haste", self.cmd_kami)
+
+        self.add_hook("player_spawn", self.player_spawn)
 
     def cmd_gungames(self, player, msg, channel):
-        self.msg("^1Gungames: ^5!glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami")
+        self.msg("^1Gungames: ^5!glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami !haste")
 
     def cmd_glovelove(self, caller, msg, channel):
         self.callvote("map " + self.get_cvar("mapname") + " guantlets-ffa", "guantlet only")
@@ -78,3 +81,11 @@ class gungames(minqlx.Plugin):
     def cmd_kami(self, caller, msg, channel):
         self.callvote("map " + self.get_cvar("mapname") + " kami-ffa", "kamikaze only")
         self.msg("{}^7 called a vote.".format(caller.name))
+
+    def cmd_haste(self, caller, msg, channel):
+        self.callvote("map " + self.get_cvar("mapname") + " haste-ffa", "permahaste")
+        self.msg("{}^7 called a vote.".format(caller.name))
+
+    def handle_player_spawn(self, player):
+        if self.game.factory == "haste-ffa":
+            player.powerups(haste=1000)
