@@ -61,6 +61,7 @@
 <strong>winneranthem.py</strong> - plays anthem for winner's country at end of match!
   - <strong>REQUIRES</strong> http://steamcommunity.com/sharedfiles/filedetails/?id=1154034259 (add to workshop.txt and qlx_workshopReferences)
   - <strong>NOTE:</strong> this conflicts with the intermission plugin so remove it from your qlx_plugins before use
+  - will play Mr. Roboto when bots win match :P
 
 Enjoy! :D - roasticle (roast on quakenet IRC). Donations are appreciated :)
 
