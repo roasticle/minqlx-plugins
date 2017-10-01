@@ -12,16 +12,25 @@ class winneranthem(minqlx.Plugin):
     def handle_stats(self, stats):
         if stats['TYPE'] == "PLAYER_STATS":
             if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0 and stats['DATA']['LOSE'] == 0:
-                self.winner = self.player(int(stats['DATA']['STEAM_ID']))
+                if int(stats['DATA']['STEAM_ID']) != 0:
+                    self.winner = self.player(int(stats['DATA']['STEAM_ID']))
+                else:
+                    self.winner = "bot"
 
     @minqlx.delay(0.3)
     def handle_game_end(self, data):
-        if not data["ABORTED"] and self.winner:
-            if self.winner.country in country_code_anthems:
-                for p in self.players():
-                    if self.db.get_flag(p, "essentials:sounds_enabled", default=True):
-                        self.stop_music(p)
-                        self.play_sound("sound/anthems/{}.ogg".format(country_code_anthems[self.winner.country]), p)
+        if not data["ABORTED"]:
+            if self.winner != "bot":
+                if self.winner.country in country_code_anthems:
+                    self.song_player("sound/anthems/{}.ogg".format(country_code_anthems[self.winner.country]))
+            else:
+                self.song_player("sound/anthems/roboto.ogg")
         self.winner = ""
+
+    def song_player(self, song):
+        for p in self.players():
+            if self.db.get_flag(p, "essentials:sounds_enabled", default=True):
+                self.stop_music(p)
+                self.play_sound(song, p)
 
 
