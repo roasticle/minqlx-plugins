@@ -87,5 +87,6 @@ class gungames(minqlx.Plugin):
         self.msg("{}^7 called a vote.".format(caller.name))
 
     def handle_player_spawn(self, player):
-        if self.game.factory == "haste-ffa":
-            player.powerups(haste=1000)
+        if hasattr(self.game, 'factory'):
+            if self.game.factory == "haste-ffa":
+                player.powerups(haste=1000)
