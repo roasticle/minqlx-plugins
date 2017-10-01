@@ -58,6 +58,9 @@
 - set qlx_WeatherUndergroundKey "YOURAPIKEYHERE" in your server.cfg
 - usage: !weather (postal or zip code) or (countryname or state/city> - eg. !weather M4S1C4, !weather 90210, !weather USA/newyork, !weather CA/losangeles, !weather vostok, antarctica - using postal or zip code is usually best as it prevents multiple locations from being found (no data gets returned).
 
+<strong>winneranthem.py</strong - plays anthem for winner's country at end of match!
+  - <strong>REQUIRES</strong> http://steamcommunity.com/sharedfiles/filedetails/?id=1154034259 (add to workshop.txt and qlx_workshopReferences)
+
 Enjoy! :D - roasticle (roast on quakenet IRC). Donations are appreciated :)
 
 
