@@ -22,6 +22,8 @@ class endstats(minqlx.Plugin):
 
         self.best_rail_accuracy_names = []
         self.best_rail_accuracy = 0
+        self.best_rail_hits = 0
+        self.best_rail_shots = 0
 
         self.most_pummels_names = []
         self.most_pummels = 0
@@ -60,7 +62,9 @@ class endstats(minqlx.Plugin):
                 player_longest_spree = stats['DATA']['MAX_STREAK']
 
                 if stats['DATA']['WEAPONS']['RAILGUN']['H'] >= 6:
-                    player_rail_accuracy = 100 * (stats['DATA']['WEAPONS']['RAILGUN']['H'] / stats['DATA']['WEAPONS']['RAILGUN']['S'])
+                    player_rail_hits = stats['DATA']['WEAPONS']['RAILGUN']['H']
+                    player_rail_shots = stats['DATA']['WEAPONS']['RAILGUN']['S']
+                    player_rail_accuracy = 100 * (player_rail_hits / player_rail_shots)
                 else:
                     player_rail_accuracy = 0
 
@@ -106,9 +110,13 @@ class endstats(minqlx.Plugin):
                 if not self.best_rail_accuracy_names:
                     self.best_rail_accuracy_names = [player_name]
                     self.best_rail_accuracy = player_rail_accuracy
+                    self.best_rail_hits = player_rail_hits
+                    self.best_rail_shots = player_rail_shots
                 elif player_rail_accuracy > self.best_rail_accuracy:
                     self.best_rail_accuracy_names = [player_name]
                     self.best_rail_accuracy = player_rail_accuracy
+                    self.best_rail_hits = player_rail_hits
+                    self.best_rail_shots = player_rail_shots
                 elif player_rail_accuracy == self.best_rail_accuracy:
                     self.best_rail_accuracy_names.append(player_name)
 
@@ -175,7 +183,7 @@ class endstats(minqlx.Plugin):
                     stats_output += "^7" + player_name
                     if len(self.best_rail_accuracy_names) > 1 and len(self.best_rail_accuracy_names) - 1 != i:
                         stats_output += ", "
-                stats_output += "^2 - {:0.2f} percent rail accuracy".format(self.best_rail_accuracy)
+                stats_output += "^2 - {:0.2f} percent rail accuracy ({} hits / {} shots)".format(self.best_rail_accuracy, self.best_rail_hits, self.best_rail_shots)
                 self.msg(stats_output)                            
 
             time.sleep(2)
@@ -231,6 +239,8 @@ class endstats(minqlx.Plugin):
 
         self.best_rail_accuracy_names = []
         self.best_rail_accuracy = 0
+        self.best_rail_hits = 0
+        self.best_rail_shots = 0
 
         self.most_pummels_names = []
         self.most_pummels = 0
