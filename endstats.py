@@ -61,6 +61,9 @@ class endstats(minqlx.Plugin):
                 player_dmg = stats['DATA']['DAMAGE']['DEALT']
                 player_longest_spree = stats['DATA']['MAX_STREAK']
 
+                player_rail_hits = 0
+                player_rail_shots = 0
+
                 if stats['DATA']['WEAPONS']['RAILGUN']['H'] >= 6:
                     player_rail_hits = stats['DATA']['WEAPONS']['RAILGUN']['H']
                     player_rail_shots = stats['DATA']['WEAPONS']['RAILGUN']['S']
