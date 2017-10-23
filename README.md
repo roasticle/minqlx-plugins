@@ -24,6 +24,12 @@
 - !gungames to show all available options
 - available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami
 
+<strong>intermissionplus.py</strong> - allow players to set custom victory songs
+- set your songs in the py file SONGS list
+- country anthems option <strong>REQUIRES</strong> http://steamcommunity.com/sharedfiles/filedetails/?id=1154034259 (add to workshop.txt and qlx_workshopReferences)
+- players type !victorysongs to see song options and then !victorysong <song number> to set their victory song
+- if no victory song is set your songs will be looped through as normal
+
 <strong>mapoo.py</strong> - allows multiple mappool files that change automatically based on player number
 - the mappool files should be all located in your baseq3 folder
 - threshold variables are the number of players (in-game not spec) at which the mappool gets activated
