@@ -4,54 +4,10 @@ PLAYER_KEY = "minqlx:players:{}"
 
 country_code_anthems = {'AF': 'afghanistan', 'SO': 'somalia', 'JP': 'japan-youtube', 'RU': 'russia', 'VA': 'vaticancity', 'CG': 'republicofthecongo', 'GR': 'greece', 'NO': 'norway', 'BF': 'burkinafaso', 'KH': 'cambodia-youtube', 'CN': 'china', 'TV': 'tuvalu', 'ET': 'ethiopia', 'AW': 'aruba', 'AG': 'antiguaandbarbuda', 'CO': 'colombia', 'VN': 'vietnam', 'LU': 'luxembourg', 'NL': 'netherlands', 'SM': 'sanmarino-youtube', 'FJ': 'fiji', 'BE': 'belgium', 'FR': 'france', 'LK': 'srilanka', 'CR': 'costarica', 'FM': 'micronesia', 'KG': 'kyrgyzstan', 'PE': 'peru', 'ML': 'mali', 'CY': 'cyprus', 'SL': 'sierraleone', 'ZM': 'zambia', 'NP': 'nepal', 'LT': 'lithuania', 'HR': 'croatia', 'IL': 'israel', 'PH': 'philippines', 'GH': 'ghana', 'BN': 'brunei', 'CL': 'chile', 'SC': 'seychelles', 'KP': 'northkorea', 'MN': 'mongolia', 'BW': 'botswana', 'BI': 'burundi', 'KR': 'southkorea', 'MU': 'mauritius', 'BJ': 'benin', 'GD': 'grenada', 'PW': 'palau', 'GA': 'gabon', 'ZA': 'southafrica', 'MR': 'mauritania', 'BH': 'bahrain', 'SD': 'sudan', 'RS': 'serbia', 'XK': 'kosovo', 'GY': 'guyana', 'MD': 'moldova', 'ER': 'eritrea', 'GM': 'gambia', 'VE': 'venezuela', 'PK': 'pakistan', 'SE': 'sweden', 'AT': 'austria', 'TH': 'thailand', 'SN': 'senegal', 'DE': 'germany', 'MX': 'mexico', 'HT': 'haiti', 'TR': 'turkey', 'AL': 'albania', 'TL': 'easttimor', 'PG': 'papuanewguinea', 'BG': 'bulgaria', 'VU': 'vanuatu', 'AM': 'armenia', 'AD': 'andorra', 'SR': 'suriname', 'AZ': 'azerbaijan', 'KZ': 'kazakhstan', 'JO': 'jordan', 'DM': 'dominica', 'IT': 'italy', 'TD': 'chad', 'RW': 'rwanda', 'GT': 'guatemala', 'SG': 'singapore', 'EG': 'egypt', 'MH': 'marshallislands', 'KE': 'kenya', 'IQ': 'iraq', 'BR': 'brazil', 'KW': 'kuwait', 'DJ': 'djibouti', 'YE': 'yemen', 'MC': 'monaco', 'GB': 'unitedkingdom', 'BD': 'bangladesh', 'LA': 'laos', 'AE': 'unitedarabemirates', 'NI': 'nicaragua', 'ME': 'montenegro', 'US': 'unitedstatesofamerica', 'LC': 'stlucia', 'TN': 'tunisia', 'HU': 'hungary', 'PA': 'panama', 'MA': 'morocco', 'TT': 'trinidadandtobago', 'UZ': 'uzbekistan', 'LB': 'lebanon', 'CZ': 'czechrepublic', 'JM': 'jamaica', 'HN': 'honduras', 'IN': 'india-janaganamana', 'BY': 'belarus', 'UA': 'ukraine', 'PL': 'poland', 'SI': 'slovenia', 'LR': 'liberia', 'SZ': 'swaziland', 'MY': 'malaysia', 'CK': 'thecookislands', 'BA': 'bosniaandherzegovina', 'MG': 'madagascar', 'AU': 'australia', 'BS': 'thebahamas', 'MW': 'malawi', 'CA': 'canada', 'DK': 'denmark', 'MT': 'malta', 'WS': 'samoa', 'LI': 'liechtenstein', 'CV': 'capeverde', 'CI': 'theivorycoast', 'CH': 'switzerland', 'OM': 'oman', 'LY': 'libya', 'GE': 'georgia', 'BT': 'bhutan', 'NA': 'namibia', 'SV': 'elsalvador', 'EC': 'ecuador', 'LV': 'latvia', 'IR': 'iran', 'PY': 'paraguay', 'TO': 'tonga', 'NZ': 'newzealand', 'BB': 'barbados', 'CM': 'cameroon', 'SA': 'saudiarabia', 'CF': 'centralafricanrepublic', 'KM': 'comoros', 'BZ': 'belize', 'AR': 'argentina', 'AO': 'angola', 'RO': 'romania', 'NE': 'nigeria', 'MZ': 'mozambique', 'CU': 'cuba', 'PT': 'portugal', 'GN': 'guinea-bisssau', 'SK': 'slovakia', 'MV': 'themaldives', 'TZ': 'tanzania', 'TG': 'togo', 'DZ': 'algeria', 'UY': 'uruguay', 'TM': 'turkmenistan', 'ST': 'saotomeandprincipe-independenciatotal', 'PR': 'puertorico', 'MM': 'burma', 'QA': 'qatar', 'FI': 'finland', 'ID': 'indonesia', 'ES': 'spain', 'MK': 'macedonia', 'EE': 'estonia', 'BO': 'bolivia'}
 
+#example songs to show format - replace with your own!
 SONGS = [
     ("Slayer - Angel of Death", "sound/allah/slayer-angel_of_death.ogg"),
-    ("Nine Inch Nails - March of the Pigs", "sound/allah/march_of_the_pigs.ogg"),
-    ("Quake 1 - Intro", "sound/allah/quake1_track2.ogg"),
-    ("Deftones - Swerve City", "sound/allah/swerve_city.ogg"),
-    ("Doom 1 - E2M2", "sound/allah/doom1_e2m2.ogg"),
-    ("Megadeth - Escape Velocity", "sound/allah/megadeth-escape_velocity.ogg"),
-    ("Deftones - Hole in the Earth", "sound/allah/deftones-hole_in_the_earth.ogg"),
-    ("Megadeth - Duke Nukem theme", "sound/allah/duketheme.ogg"),
-    ("Filter - Welcome to the Fold", "sound/allah/filter-welcome_to_the_fold.ogg"),
-    ("Mastodon - The Motherload", "sound/allah/mastadon-the_motherload.ogg"),
-    ("Megadeth - Hangar 18", "sound/allah/megadeth-hangar_18.ogg"),
-    ("Meshuggah - Bleed", "sound/allah/meshuggah-bleed.ogg"),
-    ("Nine Inch Nails - Burn", "sound/allah/nin-burn.ogg"),
-    ("Death - Painkiller", "sound/allah/painkiller.ogg"),
-    ("Nirvana - Negative Creep", "sound/allah/nirvana-negative_creep.ogg"),
-    ("Primus - Wynonas Big Brown Beaver", "sound/allah/primus-wynonas_big_brown_beaver.ogg"),
-    ("Rage Against the Machine - Bulls on Parade", "sound/allah/ratm-bulls_on_parade.ogg"),
-    ("Tool - Bulls on Parade", "sound/allah/tool-intermission.ogg"),
-    ("White Zombie - Thunder Kiss 65", "sound/allah/white_zombie-thunder_kiss_65.ogg"),
-    ("Gojira - Stranded", "sound/allah/stranded.ogg"),
-    ("Pantera - 5 Minutes Alone", "sound/allah/pantera-5minutes-alone.ogg"),
-    ("Doom 2 - Map 1", "sound/allah/doom2_1.ogg"),
-    ("Death - Crystal Mountain", "sound/allah/crystal_mountain.ogg"),
-    ("Mastodon - Precious Stones", "sound/allah/mastodon-precious_stones.ogg"),
-    ("Chemical Brothers - Block Rockin Beats", "sound/allah/block_rockin_beats.ogg"),
-    ("Filter - You Walk Away", "sound/allah/filter-you_walk_away.ogg"),
-    ("Doom 2 - runnin", "sound/allah/doom2_runnin.ogg"),
-    ("Nirvana - Scentless Apprentice", "sound/allah/scentless_apprentice"),
-    ("Meshuggah - Rational Gaze", "sound/allah/meshuggah-rational_gaze.ogg"),
-    ("Doom 1 - E1M1", "sound/allah/doom1_e1m1.ogg"),
-    ("Static-X - Shadow Zone", "sound/allah/shadow_zone.ogg"),
-    ("Green Day - Longview", "sound/allah/longview.ogg"),
-    ("Doom 2 - Intermission", "sound/allah/doom2_int.ogg"),
-    ("Alice in Chains - Rooster", "sound/allah/alice-in-chains_rooster.ogg"),
-    ("Aphex Twin - Come to Daddy", "sound/allah/aphex-twin-come_to_daddy.ogg"),
-    ("Filter - Hey Man Nice Shot", "sound/allah/filter-hey_man_nice_shot.ogg"),
-    ("Alexisonfire - Funeral", "sound/allah/alexis-funeral.ogg"),
-    ("Animals as Leaders - Behaving Badly", "sound/allah/animals-behaving.ogg"),
-    ("Animals as Leaders - Woven Web", "sound/allah/animals-web.ogg"),
-    ("Aphex Twin - Wet Tip", "sound/allah/afx-wet_tip.ogg"),
-    ("Aphex Twin - Phonatacid", "sound/allah/afx-phontacid.ogg"),
-    ("Billy Talent - Devil in a Midnight Mass", "sound/allah/billy-devil.ogg"),
-    ("Bjork - Army of Me", "sound/allah/bjork-army.ogg"),
-    ("Bush - Machinehead", "sound/allah/bush-machine.ogg"),
-    ("Angel Vivaldi - A Mercurian Summer", "sound/allah/angel-mercury.ogg"),
-    ("Chemical Brothers - Setting Sun", "sound/allah/chemical-sun.ogg"),
-    ("Rick Astley - Never Gonna Give you Up", "sound/allah/never_gonna_give_you_up.ogg")
+    ("Nine Inch Nails - March of the Pigs", "sound/allah/march_of_the_pigs.ogg")
 ]
 
 class intermissionplus(minqlx.Plugin):
