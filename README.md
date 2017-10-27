@@ -22,7 +22,7 @@
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
 - !gungames to show all available options
-- available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami
+- available triggers: !glovelove !mgs !shotties !nades !rockets !lgs !rails !plasmas !bfgs !nails !mines !chainguns !hmg !kami !haste
 
 <strong>intermissionplus.py</strong> - allow players to set custom victory songs
 - set your songs in the py file SONGS list
