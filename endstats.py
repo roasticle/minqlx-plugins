@@ -25,6 +25,9 @@ class endstats(minqlx.Plugin):
         self.best_rail_hits = 0
         self.best_rail_shots = 0
 
+        self.most_nade_kills_names = []
+        self.most_nade_kills = 0
+
         self.most_pummels_names = []
         self.most_pummels = 0
 
@@ -71,6 +74,7 @@ class endstats(minqlx.Plugin):
                 else:
                     player_rail_accuracy = 0
 
+                player_nade_kills = stats['DATA']['WEAPONS']['GRENADE']['K']
                 player_pummels = stats['DATA']['WEAPONS']['GAUNTLET']['K']                
                 player_dmg_taken = stats['DATA']['DAMAGE']['TAKEN']
 
@@ -122,6 +126,15 @@ class endstats(minqlx.Plugin):
                     self.best_rail_shots = player_rail_shots
                 elif player_rail_accuracy == self.best_rail_accuracy:
                     self.best_rail_accuracy_names.append(player_name)
+
+                if not self.most_nade_kills_names:
+                    self.most_nade_kills_names = [player_name]
+                    self.most_nade_kills = player_nade_kills
+                elif player_nade_kills > self.most_nade_kills:
+                    self.most_nade_kills_names = [player_name]
+                    self.most_nade_kills = player_nade_kills
+                elif player_nade_kills == self.most_nade_kills:
+                    self.most_nade_kills_names.append(player_name)
 
                 if not self.most_pummels_names:
                     self.most_pummels_names = [player_name]
@@ -187,7 +200,16 @@ class endstats(minqlx.Plugin):
                     if len(self.best_rail_accuracy_names) > 1 and len(self.best_rail_accuracy_names) - 1 != i:
                         stats_output += ", "
                 stats_output += "^2 - {:0.2f} percent rail accuracy ({} hits / {} shots)".format(self.best_rail_accuracy, self.best_rail_hits, self.best_rail_shots)
-                self.msg(stats_output)                            
+                self.msg(stats_output)      
+            
+            if self.most_nade_kills > 0:
+                stats_output = "^3PINEAPPLE POWER: "
+                for i, player_name in enumerate(self.most_nade_kills_names):
+                    stats_output += "^7" + player_name
+                    if len(self.most_nade_kills_names) > 1 and len(self.most_nade_kills_names) - 1 != i:
+                        stats_output += ", "
+                stats_output += "^2 - {} grenade kills".format(self.most_nade_kills)
+                self.msg(stats_output)    
 
             time.sleep(2)
 
@@ -244,6 +266,9 @@ class endstats(minqlx.Plugin):
         self.best_rail_accuracy = 0
         self.best_rail_hits = 0
         self.best_rail_shots = 0
+
+        self.most_nade_kills_names = []
+        self.most_nade_kills = 0
 
         self.most_pummels_names = []
         self.most_pummels = 0
