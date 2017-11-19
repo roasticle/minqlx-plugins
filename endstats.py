@@ -8,6 +8,9 @@ class endstats(minqlx.Plugin):
         self.add_hook("game_start", self.handle_game_start)
         self.add_hook("game_end", self.handle_game_end)
 
+        self.weapon_accuracies = ["PLASMA", "ROCKET", "PROXMINE", "RAILGUN", "CHAINGUN", "NAILGUN", "GRENADE", "LIGHTNING", "SHOTGUN", "MACHINEGUN", "HMG", "BFG"]
+        self.kamikaze_stats = {}
+
         self.best_kpm_names = []
         self.best_kpm = 0
 
@@ -45,11 +48,33 @@ class endstats(minqlx.Plugin):
                 self.world_death_stats[stats['DATA']['VICTIM']['NAME']] = 1
             else:
                 self.world_death_stats[stats['DATA']['VICTIM']['NAME']] += 1
+        elif stats['TYPE'] == "PLAYER_KILL" and self.game.state == "in_progress" and stats['DATA']['MOD'] == "KAMIKAZE":
+            killer_name = stats['DATA']['KILLER']['NAME']
+            if killer_name not in self.kamikaze_stats:
+                self.kamikaze_stats[killer_name] = 1
+            else:
+                self.kamikaze_stats[killer_name] += 1
 
-        if stats['TYPE'] == "PLAYER_STATS":
+            if self.kamikaze_stats[killer_name] == 1:
+                self.handle_kamikaze_stats(killer_name)
+        elif stats['TYPE'] == "PLAYER_STATS":
             #these stats come at end of game after MATCH_REPORT for each player
             if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0:
                 player_name = stats['DATA']['NAME']
+
+                if stats['DATA']['STEAM_ID'] != 0:
+                    player = self.player(int(stats['DATA']['STEAM_ID']))
+                    accuracy_output = "^2YOUR ACCURACY:"
+                    for weapon in self.weapon_accuracies:
+                        weapon_shots = stats['DATA']['WEAPONS'][weapon]["S"]
+                        weapon_hits = stats['DATA']['WEAPONS'][weapon]["H"]
+                        if weapon_shots > 0:
+                            if weapon_hits > 0:
+                                weapon_accuracy = 100 * (weapon_hits / weapon_shots)
+                            else:
+                                weapon_accuracy = 0.00
+                            accuracy_output += " - ^3{}: ^1{:0.2f}".format(weapon, weapon_accuracy)
+                    player.tell(accuracy_output)
 
                 if stats['DATA']['PLAY_TIME'] > 0:
                     player_kpm = stats['DATA']['KILLS'] / (stats['DATA']['PLAY_TIME'] / 60)
@@ -248,6 +273,11 @@ class endstats(minqlx.Plugin):
                         stats_output += ", "
                 stats_output += "^2 - {:,} deaths by world".format(self.most_world_deaths)
                 self.msg(stats_output)
+
+    @minqlx.delay(5)
+    def handle_kamikaze_stats(self, player_name):
+        self.center_print("{}^7's ^3 KAMIKAZE RESULTS: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name]))
+        self.kamikaze_stats[player_name] = 0
 
     def handle_game_start(self, data):
         self.best_kpm_names = []
