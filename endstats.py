@@ -276,7 +276,7 @@ class endstats(minqlx.Plugin):
 
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
-        self.center_print("{}^7's ^3 KAMIKAZE RESULTS: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name]))
+        self.center_print("{}^7's ^3 KAMIKAZE: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name]))
         self.kamikaze_stats[player_name] = 0
 
     def handle_game_start(self, data):
