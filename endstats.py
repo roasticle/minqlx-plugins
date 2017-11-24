@@ -50,13 +50,14 @@ class endstats(minqlx.Plugin):
                 self.world_death_stats[stats['DATA']['VICTIM']['NAME']] += 1
         elif stats['TYPE'] == "PLAYER_KILL" and self.game.state == "in_progress" and stats['DATA']['MOD'] == "KAMIKAZE":
             killer_name = stats['DATA']['KILLER']['NAME']
-            if killer_name not in self.kamikaze_stats:
-                self.kamikaze_stats[killer_name] = 1
-            else:
-                self.kamikaze_stats[killer_name] += 1
+            if killer_name != stats['DATA']['VICTIM']['NAME']:
+                if killer_name not in self.kamikaze_stats:
+                    self.kamikaze_stats[killer_name] = 1
+                else:
+                    self.kamikaze_stats[killer_name] += 1
 
-            if self.kamikaze_stats[killer_name] == 1:
-                self.handle_kamikaze_stats(killer_name)
+                if self.kamikaze_stats[killer_name] == 1:
+                    self.handle_kamikaze_stats(killer_name)
         elif stats['TYPE'] == "PLAYER_STATS":
             #these stats come at end of game after MATCH_REPORT for each player
             if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0:
