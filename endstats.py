@@ -10,6 +10,7 @@ class endstats(minqlx.Plugin):
 
         self.weapon_accuracies = ["PLASMA", "ROCKET", "PROXMINE", "RAILGUN", "CHAINGUN", "NAILGUN", "GRENADE", "LIGHTNING", "SHOTGUN", "MACHINEGUN", "HMG", "BFG"]
         self.kamikaze_stats = {}
+        self.plasma_stats = {}
 
         self.best_kpm_names = []
         self.best_kpm = 0
@@ -43,11 +44,24 @@ class endstats(minqlx.Plugin):
         self.most_world_deaths = 0
 
     def handle_stats(self, stats):
+        if stats['TYPE'] == "PLAYER_DEATH" and self.game.state == "in_progress" and stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
+            self.plasma_stats[stats['DATA']['KILLER']['NAME']] = 0
         if stats['TYPE'] == "PLAYER_DEATH" and self.game.state == "in_progress" and stats['DATA']['MOD'] in self.world_death_types:
-            if stats['DATA']['VICTIM']['NAME'] not in self.world_death_stats:
-                self.world_death_stats[stats['DATA']['VICTIM']['NAME']] = 1
+            victim_name = stats['DATA']['VICTIM']['NAME']
+            if victim_name not in self.world_death_stats:
+                self.world_death_stats[victim_name] = 1
             else:
-                self.world_death_stats[stats['DATA']['VICTIM']['NAME']] += 1
+                self.world_death_stats[victim_name] += 1
+        elif stats['TYPE'] == "PLAYER_KILL" and self.game.state == "in_progress" and stats['DATA']['MOD'] == "PLASMA":
+            killer_name = stats['DATA']['KILLER']['NAME']
+            if killer_name != stats['DATA']['VICTIM']['NAME']:
+                if killer_name not in self.plasma_stats:
+                    self.plasma_stats[killer_name] = 1
+                else:
+                    self.plasma_stats[killer_name] += 1
+
+                if self.plasma_stats[killer_name] == 1:
+                    self.handle_plasma_stats(killer_name)
         elif stats['TYPE'] == "PLAYER_KILL" and self.game.state == "in_progress" and stats['DATA']['MOD'] == "KAMIKAZE":
             killer_name = stats['DATA']['KILLER']['NAME']
             if killer_name != stats['DATA']['VICTIM']['NAME']:
@@ -275,6 +289,13 @@ class endstats(minqlx.Plugin):
                 stats_output += "^2 - {:,} deaths by world".format(self.most_world_deaths)
                 self.msg(stats_output)
 
+    @minqlx.delay(8)
+    def handle_plasma_stats(self, player_name):
+        if self.plasma_stats[player_name] >= 5:
+            self.center_print("{}^6 PLASMORGASM".format(player_name))
+            self.msg("{} ^6PLASMORGASM: ^7({} plasma kills in 8s)".format(player_name, self.plasma_stats[player_name]))
+        self.plasma_stats[player_name] = 0
+
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
         self.center_print("{}^7's ^3 KAMI: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name]))
@@ -310,3 +331,7 @@ class endstats(minqlx.Plugin):
         self.world_death_stats = {}
         self.most_world_deaths_names = []
         self.most_world_deaths = 0
+
+        self.kamikaze_stats = {}
+        self.plasma_stats = {}
+
