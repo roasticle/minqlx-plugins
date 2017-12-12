@@ -34,6 +34,7 @@ class motd(minqlx.Plugin):
     def __init__(self):
         super().__init__()
         self.add_hook("player_connect, self.handle_player_connect)
+        self.add_hook("player_disconnect", self.handle_player_disconnect)
         self.add_command(("setmotd", "newmotd"), self.cmd_setmotd, 4, usage="<motd>")
         self.add_command(("setmotdall", "newmotdall"), self.cmd_setmotdall, 4, usage="<motd>")
         self.add_command(("getmotd", "motd"), self.cmd_getmotd)
@@ -51,26 +52,34 @@ class motd(minqlx.Plugin):
 
         # Cvar to disable/change the welcome sound.
         self.set_cvar_once("qlx_motdHeader", "^6======= ^7Message of the Day ^6=======^7")
+                      
+        self.connected_players = []                      
 
     @minqlx.delay(10)
     def handle_player_connect(self, player):
         """Send the message of the day to the player in a tell.
         """
-        try:
-            motd = self.db[self.motd_key]
-        except KeyError:
-            return
-        
-        if not MOTD_SOUNDS: return
+        if player not in self.connected_players: #to prevent bug with player_connect firing twice
+            self.connected_players.append(player)
+                      
+            try:
+                motd = self.db[self.motd_key]
+            except KeyError:
+                return
 
-        # Try to play sound file
-        try:
-            if self.db.get_flag(player, "essentials:sounds_enabled", default=True):
-                    super().play_sound(random.choice(MOTD_SOUNDS), player)
-        except Exception as e:
-            self.msg("^1Error: ^7{}".format(e))
+            if not MOTD_SOUNDS: return
 
-        self.send_motd(player, motd)
+            # Try to play sound file
+            try:
+                if self.db.get_flag(player, "essentials:sounds_enabled", default=True):
+                        super().play_sound(random.choice(MOTD_SOUNDS), player)
+            except Exception as e:
+                self.msg("^1Error: ^7{}".format(e))
+
+            self.send_motd(player, motd)
+                      
+    def handle_player_disconnect(self, player, reason):
+        self.connected_players.remove(player)                  
 
     def cmd_setmotd(self, player, msg, channel):
         if len(msg) < 2:
