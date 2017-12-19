@@ -1,10 +1,6 @@
 import minqlx
-import minqlx.database
-import os
-import sys
 
 class roasted(minqlx.Plugin):
-    database = minqlx.database.Redis
 
     def __init__(self):
         self.yes_votes = 0
@@ -23,8 +19,6 @@ class roasted(minqlx.Plugin):
         self.add_hook("vote_ended", self.handle_vote_ended)
         self.add_hook("team_switch_attempt", self.handle_team_switch_attempt)
         self.add_hook("player_disconnect", self.handle_player_disconnect)
-
-        self.custom_voter = ""
 
     #CMD TRIGGERS
 
@@ -58,7 +52,6 @@ class roasted(minqlx.Plugin):
             if self.human_count_in_game() >= 5:
                 self.msg("^1Players must be less than 5 to add bots!")
             else:
-                self.custom_voter = caller
                 self.callvote('bot_minplayers 5', "add bots")
                 self.msg("{}^7 called a vote.".format(caller.name))
                 if(self.human_count_in_game() == 1): self.force_vote(True)
@@ -66,7 +59,6 @@ class roasted(minqlx.Plugin):
 
     def cmd_custom_vote(self, caller, msg, channel):
         vote_question, vote_passed_message = " ".join(msg[1:]).split(',')
-        self.custom_voter = caller
         self.callvote('qlx !centerprint {}'.format("^5VOTE PASSED! ^6" + vote_passed_message.upper()), vote_question)
         self.msg("{}^7 called a vote.".format(caller.name))
 
@@ -120,7 +112,7 @@ class roasted(minqlx.Plugin):
 
     @minqlx.delay(1)
     def map_reset_check(self):
-        if self.human_count_in_game() == 0 and self.game.map != "xmasasylum": #change to map if not on map and no human players in-game
+        if self.human_count_in_game() == 0 and self.game.map != "xmasasylum": #change to bloodrun if not on bloodrun and no human players in-game
             self.change_map("xmasasylum", self.game.factory)
 
     def human_count(self, *args, **kwargs):
