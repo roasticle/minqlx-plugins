@@ -1,7 +1,7 @@
 import minqlx
 import time
 
-class endstats(minqlx.Plugin):
+class uberstats(minqlx.Plugin):
 
     def __init__(self):
         self.add_hook("stats", self.handle_stats)
