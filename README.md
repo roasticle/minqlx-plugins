@@ -15,9 +15,6 @@
 <strong>gravityfixer.py</strong> - restores gravity to normal after maps with custom gravity
 - in your server.cfg you will need to set qlx_alternateGravityMaps "mapname1,mapname2,etc" for each map that has an alternate gravity set 
 
-<strong>endstats.py</strong> - various stat awards given at end of game
-- example output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
-
 <strong>gungames.py</strong> - custom voting triggers for gungames factories
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
@@ -53,6 +50,9 @@
 
 <strong>slaphappy.py</strong> - spam slap pesky players!
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
+
+<strong>uberstats.py</strong> - various awards and stats added during and endgame
+- example output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
 
 <strong>weaponspawnfixer.py</strong> - override map-forced weapon spawn times
 - <strong>REQUIRES</strong> at least minqlx 0.5.1
