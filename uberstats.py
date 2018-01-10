@@ -9,6 +9,7 @@ class endstats(minqlx.Plugin):
         self.add_hook("game_end", self.handle_game_end)
 
         self.weapon_accuracies = ["PLASMA", "ROCKET", "PROXMINE", "RAILGUN", "CHAINGUN", "NAILGUN", "GRENADE", "LIGHTNING", "SHOTGUN", "MACHINEGUN", "HMG", "BFG"]
+        self.outputted_accuracy_players = []
         self.kamikaze_stats = {}
         self.plasma_stats = {}
 
@@ -44,52 +45,64 @@ class endstats(minqlx.Plugin):
         self.most_world_deaths = 0
 
     def handle_stats(self, stats):
-        if stats['TYPE'] == "PLAYER_DEATH" and self.game.state == "in_progress" and stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
-            self.plasma_stats[stats['DATA']['KILLER']['NAME']] = 0
-        if stats['TYPE'] == "PLAYER_DEATH" and self.game.state == "in_progress" and stats['DATA']['MOD'] in self.world_death_types:
-            victim_name = stats['DATA']['VICTIM']['NAME']
-            if victim_name not in self.world_death_stats:
-                self.world_death_stats[victim_name] = 1
-            else:
-                self.world_death_stats[victim_name] += 1
-        elif stats['TYPE'] == "PLAYER_KILL" and self.game.state == "in_progress" and stats['DATA']['MOD'] == "PLASMA":
-            killer_name = stats['DATA']['KILLER']['NAME']
-            if killer_name != stats['DATA']['VICTIM']['NAME']:
-                if killer_name not in self.plasma_stats:
-                    self.plasma_stats[killer_name] = 1
-                else:
-                    self.plasma_stats[killer_name] += 1
+        if self.game.state == "in_progress":
+            if stats['TYPE'] == "PLAYER_DEATH":
+                if int(stats['DATA']['STEAM_ID']) != 0: #only human players shall pass
+                    #remove player from plasma kill counter when they die
+                    if stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
+                        self.plasma_stats[stats['DATA']['VICTIM']['NAME']] = 0
 
-                if self.plasma_stats[killer_name] == 1:
-                    self.handle_plasma_stats(killer_name)
-        elif stats['TYPE'] == "PLAYER_KILL" and self.game.state == "in_progress" and stats['DATA']['MOD'] == "KAMIKAZE":
-            killer_name = stats['DATA']['KILLER']['NAME']
-            if killer_name != stats['DATA']['VICTIM']['NAME']:
-                if killer_name not in self.kamikaze_stats:
-                    self.kamikaze_stats[killer_name] = 1
-                else:
-                    self.kamikaze_stats[killer_name] += 1
+                    #count player world deaths
+                    if stats['DATA']['MOD'] in self.world_death_types:
+                        victim_name = stats['DATA']['VICTIM']['NAME']
+                        if victim_name not in self.world_death_stats:
+                            self.world_death_stats[victim_name] = 1
+                        else:
+                            self.world_death_stats[victim_name] += 1
 
-                if self.kamikaze_stats[killer_name] == 1:
-                    self.handle_kamikaze_stats(killer_name)
-        elif stats['TYPE'] == "PLAYER_STATS":
+            elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "PLASMA":
+                killer_name = stats['DATA']['KILLER']['NAME']
+                if killer_name != stats['DATA']['VICTIM']['NAME']:
+                    if killer_name not in self.plasma_stats:
+                        self.plasma_stats[killer_name] = 1
+                    else:
+                        self.plasma_stats[killer_name] += 1
+
+                    if self.plasma_stats[killer_name] == 1:
+                        self.handle_plasma_stats(killer_name)
+            elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "KAMIKAZE":
+                killer_name = stats['DATA']['KILLER']['NAME']
+                if killer_name != stats['DATA']['VICTIM']['NAME']:
+                    if killer_name not in self.kamikaze_stats:
+                        self.kamikaze_stats[killer_name] = 1
+                    else:
+                        self.kamikaze_stats[killer_name] += 1
+
+                    if self.kamikaze_stats[killer_name] == 1:
+                        self.handle_kamikaze_stats(killer_name)
+
+        if stats['TYPE'] == "PLAYER_STATS":
             #these stats come at end of game after MATCH_REPORT for each player
             if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0:
                 player_name = stats['DATA']['NAME']
 
-                if stats['DATA']['STEAM_ID'] != 0:
+                #player accuracies (sent to each player in tell)
+                if int(stats['DATA']['STEAM_ID']) != 0:
                     player = self.player(int(stats['DATA']['STEAM_ID']))
-                    accuracy_output = "^2YOUR ACCURACY:"
-                    for weapon in self.weapon_accuracies:
-                        weapon_shots = stats['DATA']['WEAPONS'][weapon]["S"]
-                        weapon_hits = stats['DATA']['WEAPONS'][weapon]["H"]
-                        if weapon_shots > 0:
-                            if weapon_hits > 0:
-                                weapon_accuracy = 100 * (weapon_hits / weapon_shots)
-                            else:
-                                weapon_accuracy = 0.00
-                            accuracy_output += " - ^3{}: ^1{:0.2f}".format(weapon, weapon_accuracy)
-                    player.tell(accuracy_output)
+                    #dont show if player is in spec, also handle multiple output bug as well
+                    if player.team != "spectator" and player.steam_id not in self.outputted_accuracy_players:
+                        accuracy_output = "^2YOUR ACCURACY:"
+                        for weapon in self.weapon_accuracies:
+                            weapon_shots = stats['DATA']['WEAPONS'][weapon]["S"]
+                            weapon_hits = stats['DATA']['WEAPONS'][weapon]["H"]
+                            if weapon_shots > 0:
+                                if weapon_hits > 0:
+                                    weapon_accuracy = 100 * (weapon_hits / weapon_shots)
+                                else:
+                                    weapon_accuracy = 0.00
+                                accuracy_output += " - ^3{}: ^1{:0.2f}".format(weapon, weapon_accuracy)
+                        player.tell(accuracy_output)
+                        self.outputted_accuracy_players.append(player.steam_id)
 
                 if stats['DATA']['PLAY_TIME'] > 0:
                     player_kpm = stats['DATA']['KILLS'] / (stats['DATA']['PLAY_TIME'] / 60)
@@ -298,7 +311,9 @@ class endstats(minqlx.Plugin):
 
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
-        self.center_print("{}^7's ^3 KAMI: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name]))
+        kami_msg = "{}^7's ^3 KAMI: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name])
+        self.center_print(kami_msg)
+        self.msg(kami_msg)
         self.kamikaze_stats[player_name] = 0
 
     def handle_game_start(self, data):
@@ -334,4 +349,5 @@ class endstats(minqlx.Plugin):
 
         self.kamikaze_stats = {}
         self.plasma_stats = {}
+        self.outputted_accuracy_players = []
 
