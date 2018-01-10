@@ -48,6 +48,8 @@
 - announces nextmap at end of game or on !nextmap
 - !currentmap to show..current map! (mind blowing i know!)
 
+<strong>ragespec.py</strong> - !ragespec to...ragespec!
+
 <strong>slaphappy.py</strong> - spam slap pesky players!
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
