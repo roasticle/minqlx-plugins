@@ -1,5 +1,7 @@
 <strong>bot_antispec.py</strong> - fixes bug with bot_minplayers and teamsizes lower than player limit that causes bots to spec (kicks them)
 
+<strong>crash.py</strong> - !crash for random crash noob intro sounds :D
+
 <strong>discordbot.py</strong> - announce server stats to your Discord server!
 - example output: https://i.gyazo.com/d52607e54225419f4ed61e3789b68181.png
 - qlx_discord_channel_id and qlx_discord_bot_token MUST be set for this to work
