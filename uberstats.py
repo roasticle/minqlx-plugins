@@ -43,7 +43,10 @@ class uberstats(minqlx.Plugin):
         self.world_death_stats = {}
         self.most_world_deaths_names = []
         self.most_world_deaths = 0
-
+        
+        self.most_dmg_per_kill_names = []
+        self.most_dmg_per_kill = 0
+    
     def handle_stats(self, stats):
         if self.game.state == "in_progress":
             if stats['TYPE'] == "PLAYER_DEATH":
@@ -131,6 +134,10 @@ class uberstats(minqlx.Plugin):
                 player_pummels = stats['DATA']['WEAPONS']['GAUNTLET']['K']                
                 player_dmg_taken = stats['DATA']['DAMAGE']['TAKEN']
 
+                player_dmg_per_kill = 0
+                if stats['DATA']['KILLS'] > 0: #we don't want to divide by 0!
+                    player_dmg_per_kill = stats['DATA']['DAMAGE']['DEALT'] / stats['DATA']['KILLS']
+
                 if not self.best_kpm_names:
                     self.best_kpm_names = [player_name]
                     self.best_kpm = player_kpm
@@ -206,6 +213,15 @@ class uberstats(minqlx.Plugin):
                     self.most_dmg_taken = player_dmg_taken
                 elif player_dmg_taken == self.most_dmg_taken:
                     self.most_dmg_taken_names.append(player_name)    
+                    
+                if not self.most_dmg_per_kill_names:
+                    self.most_dmg_per_kill_names = [player_name]
+                    self.most_dmg_per_kill = player_dmg_per_kill
+                elif player_dmg_per_kill > self.most_dmg_per_kill:
+                    self.most_dmg_per_kill_names = [player_name]
+                    self.most_dmg_per_kill = player_dmg_per_kill
+                elif player_dmg_per_kill == self.most_dmg_per_kill:
+                    self.most_dmg_per_kill_names.append(player_name)       
 
     @minqlx.delay(2)
     @minqlx.thread
@@ -216,7 +232,7 @@ class uberstats(minqlx.Plugin):
                 stats_output += "^7" + player_name
                 if len(self.best_kpm_names) > 1 and len(self.best_kpm_names) - 1 != i:
                     stats_output += ", "
-            stats_output += "^2 - {:0.2f} kills/min".format(self.best_kpm)
+            stats_output += "^2 - {:0.2f} frags/min".format(self.best_kpm)
             self.msg(stats_output)
 
             stats_output = "^1BEST COUNTERSTRIKE PLAYER: "
@@ -261,7 +277,7 @@ class uberstats(minqlx.Plugin):
                     stats_output += "^7" + player_name
                     if len(self.most_nade_kills_names) > 1 and len(self.most_nade_kills_names) - 1 != i:
                         stats_output += ", "
-                stats_output += "^2 - {} grenade kills".format(self.most_nade_kills)
+                stats_output += "^2 - {} grenade frags".format(self.most_nade_kills)
                 self.msg(stats_output)    
 
             time.sleep(2)
@@ -302,18 +318,26 @@ class uberstats(minqlx.Plugin):
                 stats_output += "^2 - {:,} deaths by world".format(self.most_world_deaths)
                 self.msg(stats_output)
 
+            time.sleep(2)
+
+            stats_output = "^6GOOD SAMARITAN: "
+            for i, player_name in enumerate(self.most_dmg_per_kill_names):
+                stats_output += "^7" + player_name
+                if len(self.most_dmg_per_kill_names) > 1 and len(self.most_dmg_per_kill_names) - 1 != i:
+                    stats_output += ", "
+            stats_output += "^2 - {} damage per frag".format(self.most_dmg_per_kill)
+            self.msg(stats_output)
+
     @minqlx.delay(8)
     def handle_plasma_stats(self, player_name):
         if self.plasma_stats[player_name] >= 5:
             self.center_print("{}^6 PLASMORGASM".format(player_name))
-            self.msg("{} ^6PLASMORGASM: ^7({} plasma kills in 8s)".format(player_name, self.plasma_stats[player_name]))
+            self.msg("{} ^6PLASMORGASM: ^7({} plasma frags in 8s)".format(player_name, self.plasma_stats[player_name]))
         self.plasma_stats[player_name] = 0
 
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
-        kami_msg = "{}^7's ^3 KAMI: ^7{} ^1KILLS".format(player_name, self.kamikaze_stats[player_name])
-        self.center_print(kami_msg)
-        self.msg(kami_msg)
+        self.center_print("{}^7's ^3 KAMI: ^7{} ^1FRAGS".format(player_name, self.kamikaze_stats[player_name]))
         self.kamikaze_stats[player_name] = 0
 
     def handle_game_start(self, data):
@@ -346,8 +370,11 @@ class uberstats(minqlx.Plugin):
         self.world_death_stats = {}
         self.most_world_deaths_names = []
         self.most_world_deaths = 0
+        
+        self.most_dmg_per_kill_names = []
+        self.most_dmg_per_kill = 0
 
         self.kamikaze_stats = {}
         self.plasma_stats = {}
-        self.outputted_accuracy_players = []
+        self.outputted_accuracy_players = []        
 
