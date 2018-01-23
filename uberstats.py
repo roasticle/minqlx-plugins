@@ -50,18 +50,17 @@ class uberstats(minqlx.Plugin):
     def handle_stats(self, stats):
         if self.game.state == "in_progress":
             if stats['TYPE'] == "PLAYER_DEATH":
-                if int(stats['DATA']['STEAM_ID']) != 0: #only human players shall pass
-                    #remove player from plasma kill counter when they die
-                    if stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
-                        self.plasma_stats[stats['DATA']['VICTIM']['NAME']] = 0
+                #remove player from plasma kill counter when they die
+                if stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
+                    self.plasma_stats[stats['DATA']['VICTIM']['NAME']] = 0
 
-                    #count player world deaths
-                    if stats['DATA']['MOD'] in self.world_death_types:
-                        victim_name = stats['DATA']['VICTIM']['NAME']
-                        if victim_name not in self.world_death_stats:
-                            self.world_death_stats[victim_name] = 1
-                        else:
-                            self.world_death_stats[victim_name] += 1
+                #count player world deaths
+                if stats['DATA']['MOD'] in self.world_death_types:
+                    victim_name = stats['DATA']['VICTIM']['NAME']
+                    if victim_name not in self.world_death_stats:
+                        self.world_death_stats[victim_name] = 1
+                    else:
+                        self.world_death_stats[victim_name] += 1
 
             elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "PLASMA":
                 killer_name = stats['DATA']['KILLER']['NAME']
@@ -90,7 +89,7 @@ class uberstats(minqlx.Plugin):
                 player_name = stats['DATA']['NAME']
 
                 #player accuracies (sent to each player in tell)
-                if int(stats['DATA']['STEAM_ID']) != 0:
+                if stats['DATA']['STEAM_ID'] != 0: #skip bots
                     player = self.player(int(stats['DATA']['STEAM_ID']))
                     #dont show if player is in spec, also handle multiple output bug as well
                     if player.team != "spectator" and player.steam_id not in self.outputted_accuracy_players:
@@ -325,7 +324,7 @@ class uberstats(minqlx.Plugin):
                 stats_output += "^7" + player_name
                 if len(self.most_dmg_per_kill_names) > 1 and len(self.most_dmg_per_kill_names) - 1 != i:
                     stats_output += ", "
-            stats_output += "^2 - {} damage per frag".format(self.most_dmg_per_kill)
+            stats_output += "^2 - {:0.2f} damage per frag".format(self.most_dmg_per_kill)
             self.msg(stats_output)
 
     @minqlx.delay(8)
@@ -337,7 +336,9 @@ class uberstats(minqlx.Plugin):
 
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
+        kami_msg
         self.center_print("{}^7's ^3 KAMI: ^7{} ^1FRAGS".format(player_name, self.kamikaze_stats[player_name]))
+        self.msg("{}^7's ^3 KAMI: ^7{} ^1FRAGS".format(player_name, self.kamikaze_stats[player_name]))
         self.kamikaze_stats[player_name] = 0
 
     def handle_game_start(self, data):
@@ -377,4 +378,3 @@ class uberstats(minqlx.Plugin):
         self.kamikaze_stats = {}
         self.plasma_stats = {}
         self.outputted_accuracy_players = []        
-
