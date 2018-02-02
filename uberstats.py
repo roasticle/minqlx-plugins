@@ -48,40 +48,41 @@ class uberstats(minqlx.Plugin):
         self.most_dmg_per_kill = 0
     
     def handle_stats(self, stats):
-        if self.game.state == "in_progress":
-            if stats['TYPE'] == "PLAYER_DEATH":
-                #remove player from plasma kill counter when they die
-                if stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
-                    self.plasma_stats[stats['DATA']['VICTIM']['NAME']] = 0
+        if self.game is not None:
+            if self.game.state == "in_progress":
+                if stats['TYPE'] == "PLAYER_DEATH":
+                    #remove player from plasma kill counter when they die
+                    if stats['DATA']['VICTIM']['NAME'] in self.plasma_stats:
+                        self.plasma_stats[stats['DATA']['VICTIM']['NAME']] = 0
 
-                #count player world deaths
-                if stats['DATA']['MOD'] in self.world_death_types:
-                    victim_name = stats['DATA']['VICTIM']['NAME']
-                    if victim_name not in self.world_death_stats:
-                        self.world_death_stats[victim_name] = 1
-                    else:
-                        self.world_death_stats[victim_name] += 1
+                    #count player world deaths
+                    if stats['DATA']['MOD'] in self.world_death_types:
+                        victim_name = stats['DATA']['VICTIM']['NAME']
+                        if victim_name not in self.world_death_stats:
+                            self.world_death_stats[victim_name] = 1
+                        else:
+                            self.world_death_stats[victim_name] += 1
 
-            elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "PLASMA":
-                killer_name = stats['DATA']['KILLER']['NAME']
-                if killer_name != stats['DATA']['VICTIM']['NAME']:
-                    if killer_name not in self.plasma_stats:
-                        self.plasma_stats[killer_name] = 1
-                    else:
-                        self.plasma_stats[killer_name] += 1
+                elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "PLASMA":
+                    killer_name = stats['DATA']['KILLER']['NAME']
+                    if killer_name != stats['DATA']['VICTIM']['NAME']:
+                        if killer_name not in self.plasma_stats:
+                            self.plasma_stats[killer_name] = 1
+                        else:
+                            self.plasma_stats[killer_name] += 1
 
-                    if self.plasma_stats[killer_name] == 1:
-                        self.handle_plasma_stats(killer_name)
-            elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "KAMIKAZE":
-                killer_name = stats['DATA']['KILLER']['NAME']
-                if killer_name != stats['DATA']['VICTIM']['NAME']:
-                    if killer_name not in self.kamikaze_stats:
-                        self.kamikaze_stats[killer_name] = 1
-                    else:
-                        self.kamikaze_stats[killer_name] += 1
+                        if self.plasma_stats[killer_name] == 1:
+                            self.handle_plasma_stats(killer_name)
+                elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "KAMIKAZE":
+                    killer_name = stats['DATA']['KILLER']['NAME']
+                    if killer_name != stats['DATA']['VICTIM']['NAME']:
+                        if killer_name not in self.kamikaze_stats:
+                            self.kamikaze_stats[killer_name] = 1
+                        else:
+                            self.kamikaze_stats[killer_name] += 1
 
-                    if self.kamikaze_stats[killer_name] == 1:
-                        self.handle_kamikaze_stats(killer_name)
+                        if self.kamikaze_stats[killer_name] == 1:
+                            self.handle_kamikaze_stats(killer_name)
 
         if stats['TYPE'] == "PLAYER_STATS":
             #these stats come at end of game after MATCH_REPORT for each player
@@ -319,13 +320,14 @@ class uberstats(minqlx.Plugin):
 
             time.sleep(2)
 
-            stats_output = "^6GOOD SAMARITAN: "
-            for i, player_name in enumerate(self.most_dmg_per_kill_names):
-                stats_output += "^7" + player_name
-                if len(self.most_dmg_per_kill_names) > 1 and len(self.most_dmg_per_kill_names) - 1 != i:
-                    stats_output += ", "
-            stats_output += "^2 - {:0.2f} damage per frag".format(self.most_dmg_per_kill)
-            self.msg(stats_output)
+            if self.game.type not in ["Duel", "Instagib"]:
+                stats_output = "^6GOOD SAMARITAN: "
+                for i, player_name in enumerate(self.most_dmg_per_kill_names):
+                    stats_output += "^7" + player_name
+                    if len(self.most_dmg_per_kill_names) > 1 and len(self.most_dmg_per_kill_names) - 1 != i:
+                        stats_output += ", "
+                stats_output += "^2 - {:0.2f} damage per frag".format(self.most_dmg_per_kill)
+                self.msg(stats_output)
 
     @minqlx.delay(8)
     def handle_plasma_stats(self, player_name):
@@ -336,9 +338,9 @@ class uberstats(minqlx.Plugin):
 
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
-        kami_msg
-        self.center_print("{}^7's ^3 KAMI: ^7{} ^1FRAGS".format(player_name, self.kamikaze_stats[player_name]))
-        self.msg("{}^7's ^3 KAMI: ^7{} ^1FRAGS".format(player_name, self.kamikaze_stats[player_name]))
+        kami_msg = "{}^7's ^3 KAMI: ^7{} ^1FRAGS".format(player_name, self.kamikaze_stats[player_name])
+        self.center_print(kami_msg)
+        self.msg(kami_msg)
         self.kamikaze_stats[player_name] = 0
 
     def handle_game_start(self, data):
