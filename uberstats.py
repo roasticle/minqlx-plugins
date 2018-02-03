@@ -4,6 +4,8 @@ import time
 class uberstats(minqlx.Plugin):
 
     def __init__(self):
+        self.add_command("score", self.cmd_score)
+
         self.add_hook("stats", self.handle_stats)
         self.add_hook("game_start", self.handle_game_start)
         self.add_hook("game_end", self.handle_game_end)
@@ -46,6 +48,20 @@ class uberstats(minqlx.Plugin):
         
         self.most_dmg_per_kill_names = []
         self.most_dmg_per_kill = 0
+
+    def cmd_score(self, player, msg, channel):
+        if player.team != "spectator":
+            sorted_players = sorted(self.players(), key = lambda p: p.stats.score, reverse=True)
+            player_index = sorted_players.index(player) + 1
+            player.tell("^2{} - ^3Score: ^7{} - ^3K/D: ^7{} - ^3DMG: ^7{} - ^3TIME: ^7{} - ^3PING: ^7{}".format(
+                                 self.ordinal(player_index),
+                                 player.stats.score,
+                                 str(player.stats.kills) + "/" + str(player.stats.deaths),
+                                 player.stats.damage_dealt,
+                                 int((player.stats.time/(1000*60))%60),
+                                 player.stats.ping
+                             )
+                        )
     
     def handle_stats(self, stats):
         if self.game is not None:
@@ -379,4 +395,24 @@ class uberstats(minqlx.Plugin):
 
         self.kamikaze_stats = {}
         self.plasma_stats = {}
-        self.outputted_accuracy_players = []        
+        self.outputted_accuracy_players = []
+
+    def ordinal(self, value):
+        try:
+            value = int(value)
+        except ValueError:
+            return value
+
+        if value % 100//10 != 1:
+            if value % 10 == 1:
+                ordval = u"%d%s" % (value, "st")
+            elif value % 10 == 2:
+                ordval = u"%d%s" % (value, "nd")
+            elif value % 10 == 3:
+                ordval = u"%d%s" % (value, "rd")
+            else:
+                ordval = u"%d%s" % (value, "th")
+        else:
+            ordval = u"%d%s" % (value, "th")
+
+        return ordval
