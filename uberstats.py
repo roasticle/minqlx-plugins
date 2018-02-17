@@ -348,6 +348,7 @@ class uberstats(minqlx.Plugin):
     @minqlx.delay(8)
     def handle_plasma_stats(self, player_name):
         if self.plasma_stats[player_name] >= 5:
+            self.play_sound("sound/uberstats/plasmorgasm.ogg")
             self.center_print("{}^6 PLASMORGASM".format(player_name))
             self.msg("{} ^6PLASMORGASM: ^7({} plasma frags in 8s)".format(player_name, self.plasma_stats[player_name]))
         self.plasma_stats[player_name] = 0
