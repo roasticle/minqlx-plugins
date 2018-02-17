@@ -56,6 +56,8 @@
 - usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
 <strong>uberstats.py</strong> - various awards and stats added during and endgame
+- !score for your scoreboard placement (when you are below the scoreboard during game)
+- requires workshop item 1304624898 if you want plasmorgasm sound (courtesy yufli!)
 - example output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
 
 <strong>weaponspawnfixer.py</strong> - override map-forced weapon spawn times
