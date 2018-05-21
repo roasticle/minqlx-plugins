@@ -1,5 +1,4 @@
 import minqlx
-import time
 
 class battleroyale(minqlx.Plugin):
 
