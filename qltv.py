@@ -48,6 +48,6 @@ class qltv(minqlx.Plugin):
 
     def cmd_qltvjoin(self, player, msg, channel):
         self.db.set(PLAYER_KEY.format(player.steam_id) + ":qltv", 1)
-        minqlx.client_command(p.id, 'follow ' + str(sorted_players[self.spec_index].id))
+        minqlx.client_command(player.id, 'follow ' + str(sorted_players[self.spec_index].id))
 
 
