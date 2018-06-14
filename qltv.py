@@ -15,13 +15,14 @@ class qltv(minqlx.Plugin):
 
         self.add_hook("game_start", self.handle_game_start)
 
-    def handle_game_start(self):
+    def handle_game_start(self, *args, **kwargs):
         self.speccer()
 
     @minqlx.delay(45)
     def spec_timer(self):
         self.speccer()
 
+    @minqlx.delay(2)
     def speccer(self):
         if self.game.state == "in_progress":
             self.sorted_players = sorted(self.players(), key = lambda p: p.stats.score, reverse=True)
