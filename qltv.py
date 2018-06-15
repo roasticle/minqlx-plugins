@@ -7,7 +7,6 @@ class qltv(minqlx.Plugin):
     def __init__(self):
         self.spec_index = 0
         self.last_spec_steam_id = 0
-        self.spec_timer()
         self.sorted_players = ""
 
         self.add_command("qltv", self.cmd_qltv)
@@ -15,7 +14,11 @@ class qltv(minqlx.Plugin):
 
         self.add_hook("game_start", self.handle_game_start)
 
-    def handle_game_start(self, *args, **kwargs):
+    def handle_game_start(self, data):
+        self.spec_index = 0
+        self.last_spec_steam_id = 0
+        self.spec_timer()
+        self.sorted_players = ""
         self.speccer()
 
     @minqlx.delay(45)
