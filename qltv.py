@@ -37,8 +37,10 @@ class qltv(minqlx.Plugin):
                 self.spec_index += 1
 
             for player in self.teams()['spectator']:
-                if self.db.get(PLAYER_KEY.format(player.steam_id) + ":qltv") :
-                    if int(self.db.get(PLAYER_KEY.format(player.steam_id) + ":qltv")) == 1:
+                player_spec_setting = self.db.get(PLAYER_KEY.format(player.steam_id) + ":qltv")
+
+                if player_spec_setting:
+                    if int(player_spec_setting) == 1:
                         minqlx.client_command(player.id, 'follow ' + str(self.sorted_players[self.spec_index].id))
 
             self.last_spec_steam_id = self.sorted_players[self.spec_index].steam_id
