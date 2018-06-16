@@ -31,9 +31,7 @@ class qltv(minqlx.Plugin):
             self.sorted_players = sorted(self.players(), key = lambda p: p.stats.score, reverse=True)
             sorted_player_count = len(self.sorted_players)
 
-            if self.spec_index + 1 > sorted_player_count or self.spec_index == 5:
-                self.spec_index = 0
-            elif self.last_spec_steam_id == self.sorted_players[self.spec_index].steam_id:
+            if self.last_spec_steam_id == self.sorted_players[self.spec_index].steam_id:
                 self.spec_index += 1
 
             for player in self.teams()['spectator']:
@@ -45,6 +43,9 @@ class qltv(minqlx.Plugin):
 
             self.last_spec_steam_id = self.sorted_players[self.spec_index].steam_id
             self.spec_index += 1
+
+            if self.spec_index > sorted_player_count or self.spec_index == 3:
+                self.spec_index = 0
 
         self.spec_timer()
 
