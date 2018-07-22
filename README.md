@@ -17,6 +17,9 @@
 <strong>gravityfixer.py</strong> - restores gravity to normal after maps with custom gravity
 - in your server.cfg you will need to set qlx_alternateGravityMaps "mapname1,mapname2,etc" for each map that has an alternate gravity set 
 
+<strong>fun.py</strong> - custom fun.py
+- requires Dark Fiber Sound Pack - https://steamcommunity.com/sharedfiles/filedetails/?id=830745553 (add 830745553 to your servers workshop.txt and qlx_workshopReferences in server.cfg
+
 <strong>gungames.py</strong> - custom voting triggers for gungames factories
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
