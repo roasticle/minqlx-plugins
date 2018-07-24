@@ -36,7 +36,7 @@ class qltv(minqlx.Plugin):
 
     @minqlx.delay(3)
     def speccer(self):
-        self.sorted_players = sorted(self.players(), key = lambda p: p.stats.score, reverse=True)
+        self.sorted_players = sorted(self.teams()['free'], key = lambda p: p.stats.score, reverse=True)
 
         for player in self.teams()['spectator']:
             self.check_and_spec(player)
@@ -67,6 +67,7 @@ class qltv(minqlx.Plugin):
             new_qltv_setting = 0
 
         self.db.set(PLAYER_KEY.format(player.steam_id) + ":qltv", new_qltv_setting)
+        self.check_and_spec(player)
 
     @minqlx.delay(3)
     def handle_player_connect(self, player):
@@ -78,4 +79,3 @@ class qltv(minqlx.Plugin):
     def handle_team_switch_attempt(self, player, old_team, new_team):
         if player.steam_id == self.last_spec_steam_id and new_team == "spectator":
             self.speccer()
-
