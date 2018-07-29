@@ -18,7 +18,7 @@ class qltv(minqlx.Plugin):
         self.add_hook("player_disconnect", self.handle_player_disconnect)
         self.add_hook("team_switch_attempt", self.handle_team_switch_attempt)
 
-    def handle_game_start(self):
+    def handle_game_start(self, *args, **kwargs):
         self.kill_threshold_hit = 0
         self.speccer()
 
@@ -41,7 +41,8 @@ class qltv(minqlx.Plugin):
         for player in self.teams()['spectator']:
             self.check_and_spec(player)
 
-        self.last_spec_steam_id = self.sorted_players[0].steam_id
+        if self.sorted_players:    
+            self.last_spec_steam_id = self.sorted_players[0].steam_id
 
     def check_and_spec(self, player):
         player_spec_setting = self.db.get(PLAYER_KEY.format(player.steam_id) + ":qltv")
