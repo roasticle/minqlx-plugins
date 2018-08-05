@@ -48,7 +48,7 @@ class qltv(minqlx.Plugin):
         player_spec_setting = self.db.get(PLAYER_KEY.format(player.steam_id) + ":qltv")
 
         if player_spec_setting:
-            if int(player_spec_setting) == 1:
+            if int(player_spec_setting) == 1 and self.sorted_players:
                 minqlx.client_command(player.id, 'follow ' + str(self.sorted_players[0].id))
 
     def cmd_qltv(self, player, msg, channel):
