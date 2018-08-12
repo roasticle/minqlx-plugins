@@ -70,7 +70,7 @@ class uberstats(minqlx.Plugin):
 
     def handle_stats(self, stats):
         if self.game is not None:
-            if self.game.state == "in_progress":            
+            if self.game.state == "in_progress":
                 if stats['TYPE'] == "PLAYER_DEATH":
                     victim_name = stats['DATA']['VICTIM']['NAME']
 
@@ -361,7 +361,7 @@ class uberstats(minqlx.Plugin):
             self.play_sound("sound/uberstats/{}.ogg".format(weapon.lower()))
             self.center_print("{}^1 {}".format(player_name, self.weapon_sprees[self.weapons.index(weapon)]))
             self.msg("{} ^1{}: ^2({} {} frags in 8s)".format(player_name, self.weapon_sprees[self.weapons.index(weapon)], self.kill_streak[weapon][player_name], weapon))
-        self.kill_streak[weapon][player_name] = 0
+            self.kill_streak[weapon][player_name] = 0
 
     @minqlx.delay(5)
     def handle_kamikaze_stats(self, player_name):
