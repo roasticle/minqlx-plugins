@@ -358,7 +358,7 @@ class uberstats(minqlx.Plugin):
     @minqlx.delay(8)
     def handle_kill_streak(self, player_name, weapon):
         if int(self.kill_streak[weapon][player_name]) >= 4:
-            self.play_sound("sound/uberstats/{}}.ogg".format(weapon.lower()))
+            self.play_sound("sound/uberstats/{}.ogg".format(weapon.lower()))
             self.center_print("{}^1 {}".format(player_name, self.weapon_sprees[self.weapons.index(weapon)]))
             self.msg("{} ^1{}: ^2({} {} frags in 8s)".format(player_name, self.weapon_sprees[self.weapons.index(weapon)], self.kill_streak[weapon][player_name], weapon))
         self.kill_streak[weapon][player_name] = 0
