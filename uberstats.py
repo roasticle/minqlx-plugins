@@ -18,7 +18,6 @@ class uberstats(minqlx.Plugin):
 
         self.outputted_accuracy_players = []
         self.kamikaze_stats = {}
-        self.plasma_stats = {}
 
         self.best_kpm_names = []
         self.best_kpm = 0
@@ -405,7 +404,6 @@ class uberstats(minqlx.Plugin):
         self.most_dmg_per_kill = 0
 
         self.kamikaze_stats = {}
-        self.plasma_stats = {}
         for weapon in self.weapons:
             self.kill_streak[weapon] = {}
 
