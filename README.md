@@ -54,6 +54,9 @@
 - !currentmap to show..current map! (mind blowing i know!)
 
 <strong>qltv.py</strong> - automatically spec the top player
+- intended for FFA
+- great for streaming
+- updates every 10 frags
 - !qltv to toggle
 
 <strong>ragespec.py</strong> - !ragespec to...ragespec!
