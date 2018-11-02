@@ -17,6 +17,7 @@ class uberstats(minqlx.Plugin):
             self.kill_streak[weapon] = {}
 
         self.outputted_accuracy_players = []
+        self.deaths = {}
         self.kamikaze_stats = {}
 
         self.best_kpm_names = []
@@ -88,9 +89,10 @@ class uberstats(minqlx.Plugin):
                             self.world_death_stats[victim_name] += 1
                 elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] in self.weapons:
                     killer_name = stats['DATA']['KILLER']['NAME']
+                    victim_name = stats['DATA']['VICTIM']['NAME']
                     weapon = stats['DATA']['MOD']
 
-                    if killer_name != stats['DATA']['VICTIM']['NAME']:
+                    if killer_name != victim_name:
                         if killer_name not in self.kill_streak[weapon]:
                             self.kill_streak[weapon][killer_name] = 1
                         else:
@@ -98,6 +100,24 @@ class uberstats(minqlx.Plugin):
 
                         if self.kill_streak[weapon][killer_name] == 1:
                             self.handle_kill_streak(killer_name, weapon)
+
+                        #used for biggest meanie per player stats on endgame
+                        if victim_name not in self.deaths:
+                            self.deaths[victim_name] = {}
+                            self.deaths[victim_name]['most_kills'] = 1
+                            self.deaths[victim_name]['biggest_meanies'] = []
+
+                        if killer_name not in self.deaths[victim_name]:
+                            self.deaths[victim_name][killer_name] = 1
+                        else:
+                            self.deaths[victim_name][killer_name] += 1
+
+                        if self.deaths[victim_name][killer_name] > self.deaths[victim_name]['most_kills']:
+                            self.deaths[victim_name]['most_kills'] = self.deaths[victim_name][killer_name]
+                            self.deaths[victim_name]['biggest_meanies'] = [killer_name]
+                        elif self.deaths[victim_name][killer_name] == self.deaths[victim_name]['most_kills']:
+                            self.deaths[victim_name]['biggest_meanies'].append(killer_name)
+
                 elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "KAMIKAZE":
                     killer_name = stats['DATA']['KILLER']['NAME']
                     if killer_name != stats['DATA']['VICTIM']['NAME']:
@@ -131,6 +151,11 @@ class uberstats(minqlx.Plugin):
                                 accuracy_output += " - ^3{}: ^1{:0.2f}".format(weapon, weapon_accuracy)
                         player.tell(accuracy_output)
                         self.outputted_accuracy_players.append(player.steam_id)
+
+                        if player_name in self.deaths:
+                            biggest_meanies = ", ".join([str(x) for x in self.deaths[player_name]['biggest_meanies']])
+                            player.tell("^2BIGGEST MEANIE: ^7{} ^2 - killed you ^1{} ^2times".format(biggest_meanies, self.deaths[player_name]['most_kills']))
+
 
                 if stats['DATA']['PLAY_TIME'] > 0:
                     player_kpm = stats['DATA']['KILLS'] / (stats['DATA']['PLAY_TIME'] / 60)
@@ -408,6 +433,7 @@ class uberstats(minqlx.Plugin):
             self.kill_streak[weapon] = {}
 
         self.outputted_accuracy_players = []
+        self.deaths = {}
 
     def ordinal(self, value):
         try:
