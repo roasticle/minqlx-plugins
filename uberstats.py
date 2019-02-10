@@ -474,10 +474,11 @@ class uberstats(minqlx.Plugin):
 
     if score > current_record:
       self.db.set(RECORDS_KEY.format(record_name) + ":high_score", score)
+      self.db.delete(RECORDS_KEY.format(record_name) + ":players")
       self.db.sadd(RECORDS_KEY.format(record_name) + ":players", player_name)
       return "^5NEW HIGH SCORE! - "
     elif score == current_record:
-      self.db.sadd(RECORDS_KEY.format(record_name) + ":players" , player_name)
+      self.db.sadd(RECORDS_KEY.format(record_name) + ":players", player_name)
       return "^5TIED HIGH SCORE! - "
     else:
       return ""
@@ -488,5 +489,6 @@ class uberstats(minqlx.Plugin):
     for key, val in WEAPON_RECORDS.items():
       high_score = self.db.get(RECORDS_KEY.format(key) + ":high_score")
       if high_score is not None:
-        players = self.db.smembers(RECORDS_KEY.format(key) + "players")
+        players = self.db.smembers(RECORDS_KEY.format(key) + ":players")
         self.msg("^1{} - ^7{} ^2- {}".format(val[0], ", ".join(players), val[1].format(float(high_score))))
+
