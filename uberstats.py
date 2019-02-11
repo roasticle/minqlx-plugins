@@ -7,7 +7,7 @@ WEAPON_RECORDS = {
                     "counterstrike": ["BEST COUNTERSTRIKE PLAYER", "{:0.2f} K/D ratio"],
                     "most_damage": ["DESTRUCTICATOR", "{:,} dmg given"],
                     "longest_spree": ["RAMBO", "{} kill streak"],
-                    "best_rail_accuracy": ["LASER EYES", "{:0.2f} percent rail accuracy ({} hits / {} shots)"],
+                    "best_rail_accuracy": ["LASER EYES", "{:0.2f} percent rail accuracy"],
                     "most_nade_kills": ["PINEAPPLE POWER", "{} grenade frags"],
                     "most_pummels": ["PUMMEL LORD", "{} pummels"],
                     "most_dmg_taken": ["BIGGEST PINCUSHION", "{:,} ^6dmg taken"],
@@ -382,7 +382,7 @@ class uberstats(minqlx.Plugin):
         stats_output = "^6GOOD SAMARITAN: "
         record_response = ""
         for i, player_name in enumerate(self.most_dmg_per_kill_names):
-          record_response = self.check_record("most_dmg_per_kill", float(most_dmg_per_kill), player_name)
+          record_response = self.check_record("most_dmg_per_kill", float(self.most_dmg_per_kill), player_name)
           stats_output += "^7" + player_name
           if len(self.most_dmg_per_kill_names) > 1 and len(self.most_dmg_per_kill_names) - 1 != i:
             stats_output += ", "
