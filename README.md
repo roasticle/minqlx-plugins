@@ -66,8 +66,30 @@
 
 <strong>uberstats.py</strong> - various awards and stats added during and endgame
 - !score for your scoreboard placement (when you are below the scoreboard during game)
-- requires workshop item 1304624898 if you want plasmorgasm sound (looking for someone to do new sounds)
+- requires workshop item 1304624898 if you want weapon award sounds
+- high scores shown on new map load or with !highscores trigger
 - example endgame output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
+- optional stats file SFTP upload setup:
+  - requires pysftp, linux cmd line type: pip3 install pysftp 
+  - requires following cvars: 
+    - qlx_uberstats_sftp_hostname - sftp server hostname
+    - qlx_uberstats_sftp_username
+    - qlx_uberstats_sftp_password
+    - qlx_uberstats_sftp_remote_path - remote path on sftp server where stats file will be uploads, format of file is hostname- uberstats.html
+    - you can then include the file on your site, it will automatically fill in data to certain classes
+    - records are the following (ignore the formatting codes): WEAPON_RECORDS = {
+                    "kill_machine": ["KILL MACHINE", "{:0.2f} frags/min"],
+                    "counterstrike": ["BEST COUNTERSTRIKE PLAYER", "{:0.2f} K/D ratio"],
+                    "most_damage": ["DESTRUCTICATOR", "{:,} dmg given"],
+                    "longest_spree": ["RAMBO", "{} kill streak"],
+                    "best_rail_accuracy": ["LASER EYES", "{:0.2f} percent rail accuracy"],
+                    "most_nade_kills": ["PINEAPPLE POWER", "{} grenade frags"],
+                    "most_pummels": ["PUMMEL LORD", "{} pummels"],
+                    "most_dmg_taken": ["BIGGEST PINCUSHION", "{:,} dmg taken"],
+                    "most_world_deaths": ["CLUMSIEST FOOL", "{:,} deaths by world"],
+                    "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"]
+                  }
+     - so for instance, <span class="kill_machine_record"></span> and <span class="kill_machine_players"></span> would automatically fill the record and players into the span contents
 
 <strong>weaponspawnfixer.py</strong> - override map-forced weapon spawn times
 - <strong>REQUIRES</strong> at least minqlx 0.5.1
