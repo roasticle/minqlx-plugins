@@ -77,7 +77,7 @@
     - qlx_uberstats_sftp_password
     - qlx_uberstats_sftp_remote_path - remote path on sftp server where stats file will be uploads, format of file is hostname- uberstats.html
     - you can then include the file on your site, it will automatically fill in data to certain classes
-    - records are the following (ignore the formatting codes): '''WEAPON_RECORDS = {
+    - records are the following (ignore the formatting codes): WEAPON_RECORDS = {
                     "kill_machine": ["KILL MACHINE", "{:0.2f} frags/min"],
                     "counterstrike": ["BEST COUNTERSTRIKE PLAYER", "{:0.2f} K/D ratio"],
                     "most_damage": ["DESTRUCTICATOR", "{:,} dmg given"],
@@ -88,8 +88,8 @@
                     "most_dmg_taken": ["BIGGEST PINCUSHION", "{:,} dmg taken"],
                     "most_world_deaths": ["CLUMSIEST FOOL", "{:,} deaths by world"],
                     "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"]
-                  }'''
-     - so for instance, '''<span class="kill_machine_record"></span> and <span class="kill_machine_players"></span>''' would automatically fill the record and players into the span contents
+                  }
+     - so for instance, a span with the class "kill_machine_record and another with the class "kill_machine_players" would automatically fill the record and players into the span contents
 
 <strong>weaponspawnfixer.py</strong> - override map-forced weapon spawn times
 - <strong>REQUIRES</strong> at least minqlx 0.5.1
