@@ -17,7 +17,6 @@ WEAPON_RECORDS = {
                     "most_world_deaths": ["CLUMSIEST FOOL", "{:,} deaths by world"],
                     "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"]
                   }
-FILE_PATTERN = re.compile('[\W_]+')
 
 class uberstats(minqlx.Plugin):
 
