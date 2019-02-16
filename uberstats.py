@@ -1,5 +1,8 @@
 import minqlx
 import time
+import os
+import pysftp
+import re
 
 RECORDS_KEY = "minqlx:uberstats_records:{}"
 WEAPON_RECORDS = {
@@ -10,19 +13,30 @@ WEAPON_RECORDS = {
                     "best_rail_accuracy": ["LASER EYES", "{:0.2f} percent rail accuracy"],
                     "most_nade_kills": ["PINEAPPLE POWER", "{} grenade frags"],
                     "most_pummels": ["PUMMEL LORD", "{} pummels"],
-                    "most_dmg_taken": ["BIGGEST PINCUSHION", "{:,} ^6dmg taken"],
+                    "most_dmg_taken": ["BIGGEST PINCUSHION", "{:,} dmg taken"],
                     "most_world_deaths": ["CLUMSIEST FOOL", "{:,} deaths by world"],
                     "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"]
                   }
+FILE_PATTERN = re.compile('[\W_]+')
 
 class uberstats(minqlx.Plugin):
 
   def __init__(self):
+    self.set_cvar_once("qlx_uberstats_sftp_hostname", "")
+    self.set_cvar_once("qlx_uberstats_sftp_username", "")
+    self.set_cvar_once("qlx_uberstats_sftp_password", "")
+    self.set_cvar_once("qlx_uberstats_sftp_remote_path", "")
+
+    self.sftp_hostname = self.get_cvar("qlx_uberstats_sftp_hostname")
+    self.sftp_username = self.get_cvar("qlx_uberstats_sftp_username")
+    self.sftp_password = self.get_cvar("qlx_uberstats_sftp_password")
+    self.sftp_remote_path = self.get_cvar("qlx_uberstats_sftp_remote_path")
+
     self.add_command("score", self.cmd_score)
     self.add_command("highscores", self.cmd_highscores)
 
     self.add_hook("stats", self.handle_stats)
-    self.add_hook("game_start", self.handle_game_start)
+    self.add_hook("map", self.handle_map)
     self.add_hook("game_end", self.handle_game_end)
 
     self.weapons = ["PLASMA", "ROCKET", "PROXMINE", "RAILGUN", "CHAINGUN", "NAILGUN", "GRENADE", "LIGHTNING", "SHOTGUN", "MACHINEGUN", "HMG", "BFG", "GAUNTLET"]
@@ -389,6 +403,9 @@ class uberstats(minqlx.Plugin):
         stats_output += "^2 - {:0.2f} damage per frag".format(self.most_dmg_per_kill)
         self.msg(record_response + stats_output)
 
+      if self.sftp_hostname:
+        self.high_scores("endgame")
+
   @minqlx.delay(8)
   def handle_kill_streak(self, player_name, weapon):
     if int(self.kill_streak[weapon][player_name]) >= 4:
@@ -404,7 +421,8 @@ class uberstats(minqlx.Plugin):
     self.msg(kami_msg)
     self.kamikaze_stats[player_name] = 0
 
-  def handle_game_start(self, data):
+  @minqlx.delay(10)
+  def handle_map(self, mapname, factory):
     self.best_kpm_names = []
     self.best_kpm = 0
 
@@ -443,6 +461,8 @@ class uberstats(minqlx.Plugin):
       self.kill_streak[weapon] = {}
 
     self.outputted_accuracy_players = []
+
+    self.high_scores("triggered")
 
   def ordinal(self, value):
     try:
@@ -484,11 +504,36 @@ class uberstats(minqlx.Plugin):
       return ""
 
   def cmd_highscores(self, player, msg, channel):
-    self.msg("^5***UBERSTATS HIGH SCORES***")
+    self.high_scores("triggered")
+
+  @minqlx.thread
+  def high_scores(self, method):
+    if method == "triggered":
+      self.msg("^5***UBERSTATS HIGH SCORES***")
+    elif method == "endgame":
+      html = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>\n" \
+           "<script>\n"
 
     for key, val in WEAPON_RECORDS.items():
       high_score = self.db.get(RECORDS_KEY.format(key) + ":high_score")
       if high_score is not None:
-        players = self.db.smembers(RECORDS_KEY.format(key) + ":players")
-        self.msg("^1{} - ^7{} ^2- {}".format(val[0], ", ".join(players), val[1].format(float(high_score))))
+        players = ", ".join(self.db.smembers(RECORDS_KEY.format(key) + ":players"))
+        if method == "triggered":
+          self.msg("^1{} - ^7{} ^2- {}".format(val[0], players, val[1].format(float(high_score))))
+        elif method == "endgame":
+          html += "$('.{}_record').text('{}');\n".format(key, val[1].format(float(high_score)))
+          html += "$('.{}_players').text('{}');\n\n".format(key, players)
+
+    if method == "endgame":
+      html += "</script>"
+      #make nice filename from hostname
+      uberfilename = re.sub(' +', '_', (re.sub("[^a-zA-Z.\d\s]", "", self.game.hostname) + "-uberstats.html").lower())
+      f = open(uberfilename, "w+")
+      f.write(html)
+      f.close()
+      cnopts = pysftp.CnOpts()
+      cnopts.hostkeys = None
+      srv = pysftp.Connection(host = self.sftp_hostname, username = self.sftp_username, password = self.sftp_password, cnopts=cnopts)
+      srv.chdir(self.sftp_remote_path)
+      srv.put(uberfilename)
 
