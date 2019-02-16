@@ -281,6 +281,7 @@ class uberstats(minqlx.Plugin):
   @minqlx.thread
   def handle_game_end(self, data):
     if not data["ABORTED"]:
+      self.msg("^5***UBERSTATS***")
       stats_output = "^1KILL MACHINE: "
       record_response = ""
       for i, player_name in enumerate(self.best_kpm_names):
