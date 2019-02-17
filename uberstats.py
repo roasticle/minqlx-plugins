@@ -3,7 +3,6 @@ import time
 import os
 import pysftp
 import re
-import codecs
 
 RECORDS_KEY = "minqlx:uberstats_records:{}"
 WEAPON_RECORDS = {
