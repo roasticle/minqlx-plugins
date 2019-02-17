@@ -3,6 +3,7 @@ import time
 import os
 import pysftp
 import re
+import codecs
 
 RECORDS_KEY = "minqlx:uberstats_records:{}"
 WEAPON_RECORDS = {
@@ -530,7 +531,7 @@ class uberstats(minqlx.Plugin):
       html += "});\n</script>"
       #make nice filename from hostname
       uberfilename = re.sub(' +', '_', (re.sub("[^a-zA-Z.\d\s]", "", self.game.hostname) + "-uberstats.html").lower())
-      f = open(uberfilename, "w+")
+      f = open(uberfilename, "w+", "utf-8")
       f.write(html)
       f.close()
       cnopts = pysftp.CnOpts()
