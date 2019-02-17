@@ -35,7 +35,6 @@ class uberstats(minqlx.Plugin):
 
     self.add_command("score", self.cmd_score)
     self.add_command("highscores", self.cmd_highscores)
-    self.add_command("russia", self.cmd_russia)
 
     self.add_hook("stats", self.handle_stats)
     self.add_hook("map", self.handle_map)
