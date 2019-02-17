@@ -17,6 +17,7 @@ WEAPON_RECORDS = {
                     "most_world_deaths": ["CLUMSIEST FOOL", "{:,} deaths by world"],
                     "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"]
                   }
+FILE_PATTERN = re.compile('[\W_]+')
 
 class uberstats(minqlx.Plugin):
 
@@ -511,8 +512,9 @@ class uberstats(minqlx.Plugin):
     if method == "triggered":
       self.msg("^5***UBERSTATS HIGH SCORES***")
     elif method == "endgame":
-      html = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>\n" \
-           "<script>\n"
+      html = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>\n" + \
+           "<script>\n" + \
+           "$(function(){\n"
 
     for key, val in WEAPON_RECORDS.items():
       high_score = self.db.get(RECORDS_KEY.format(key) + ":high_score")
@@ -525,7 +527,7 @@ class uberstats(minqlx.Plugin):
           html += "$('.{}_players').text('{}');\n\n".format(key, players)
 
     if method == "endgame":
-      html += "</script>"
+      html += "});\n</script>"
       #make nice filename from hostname
       uberfilename = re.sub(' +', '_', (re.sub("[^a-zA-Z.\d\s]", "", self.game.hostname) + "-uberstats.html").lower())
       f = open(uberfilename, "w+")
