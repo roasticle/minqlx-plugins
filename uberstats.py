@@ -35,6 +35,7 @@ class uberstats(minqlx.Plugin):
 
     self.add_command("score", self.cmd_score)
     self.add_command("highscores", self.cmd_highscores)
+    self.add_command("russia", self.cmd_russia)
 
     self.add_hook("stats", self.handle_stats)
     self.add_hook("map", self.handle_map)
@@ -531,7 +532,7 @@ class uberstats(minqlx.Plugin):
       html += "});\n</script>"
       #make nice filename from hostname
       uberfilename = re.sub(' +', '_', (re.sub("[^a-zA-Z.\d\s]", "", self.game.hostname) + "-uberstats.html").lower())
-      f = open(uberfilename, "w+", "utf-8")
+      f = open(uberfilename, "w+")
       f.write(html)
       f.close()
       cnopts = pysftp.CnOpts()
@@ -539,4 +540,3 @@ class uberstats(minqlx.Plugin):
       srv = pysftp.Connection(host = self.sftp_hostname, username = self.sftp_username, password = self.sftp_password, cnopts=cnopts)
       srv.chdir(self.sftp_remote_path)
       srv.put(uberfilename)
-
