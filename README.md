@@ -67,7 +67,7 @@
 <strong>uberstats.py</strong> - various awards and stats added during and endgame
 - !score for your scoreboard placement (when you are below the scoreboard during game)
 - requires workshop item 1304624898 if you want weapon award sounds
-- high scores shown on new map load or with !highscores trigger
+- high scores shown on new map load or with !highscores trigger - !clearhighscores to clear them (admin only)
 - example endgame output - https://thumb.gyazo.com/thumb/1200/_fb5d34fde51d1333da746ad90f25cf9f-png.jpg
 - optional stats file SFTP upload setup:
   - requires pysftp, linux cmd line type: pip3 install pysftp 
