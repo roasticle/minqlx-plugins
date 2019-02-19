@@ -497,6 +497,7 @@ class uberstats(minqlx.Plugin):
       self.db.set(RECORDS_KEY.format(record_name) + ":high_score", score)
       self.db.delete(RECORDS_KEY.format(record_name) + ":players")
       self.db.sadd(RECORDS_KEY.format(record_name) + ":players", player_name)
+      self.play_sound("sound/vo_evil/new_high_score")
       return "^5NEW HIGH SCORE! - "
     elif score == current_record:
       self.db.sadd(RECORDS_KEY.format(record_name) + ":players", player_name)
