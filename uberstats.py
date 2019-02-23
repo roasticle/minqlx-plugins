@@ -98,55 +98,55 @@ class uberstats(minqlx.Plugin):
       )
 
   def handle_stats(self, stats):
-    if self.game is not None:
-      if self.game.state == "in_progress":
-        if stats['TYPE'] == "PLAYER_DEATH":
-          victim_name = stats['DATA']['VICTIM']['NAME']
-
-          #remove player from kill streak counters when they die
-          for weapon in self.weapons:
-            if self.kill_streak[weapon]:
-              if victim_name in self.kill_streak[weapon]:
-                self.kill_streak[weapon][victim_name] = 0
-
-          #count player world deaths
-          if stats['DATA']['MOD'] in self.world_death_types:
+    if stats['DATA']['STEAM_ID'] != "0": #ignore games with bots in them
+      if self.game is not None:
+        if self.game.state == "in_progress":
+          if stats['TYPE'] == "PLAYER_DEATH":
             victim_name = stats['DATA']['VICTIM']['NAME']
-            if victim_name not in self.world_death_stats:
-              self.world_death_stats[victim_name] = 1
-            else:
-              self.world_death_stats[victim_name] += 1
-        elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] in self.weapons:
-          killer_name = stats['DATA']['KILLER']['NAME']
-          weapon = stats['DATA']['MOD']
 
-          if killer_name != stats['DATA']['VICTIM']['NAME']:
-            if killer_name not in self.kill_streak[weapon]:
-              self.kill_streak[weapon][killer_name] = 1
-            else:
-              self.kill_streak[weapon][killer_name] += 1
+            #remove player from kill streak counters when they die
+            for weapon in self.weapons:
+              if self.kill_streak[weapon]:
+                if victim_name in self.kill_streak[weapon]:
+                  self.kill_streak[weapon][victim_name] = 0
 
-            if self.kill_streak[weapon][killer_name] == 1:
-              self.handle_kill_streak(killer_name, weapon)
-        elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "KAMIKAZE":
-          killer_name = stats['DATA']['KILLER']['NAME']
-          if killer_name != stats['DATA']['VICTIM']['NAME']:
-            if killer_name not in self.kamikaze_stats:
-              self.kamikaze_stats[killer_name] = 1
-            else:
-              self.kamikaze_stats[killer_name] += 1
+            #count player world deaths
+            if stats['DATA']['MOD'] in self.world_death_types:
+              victim_name = stats['DATA']['VICTIM']['NAME']
+              if victim_name not in self.world_death_stats:
+                self.world_death_stats[victim_name] = 1
+              else:
+                self.world_death_stats[victim_name] += 1
+          elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] in self.weapons:
+            killer_name = stats['DATA']['KILLER']['NAME']
+            weapon = stats['DATA']['MOD']
 
-            if self.kamikaze_stats[killer_name] == 1:
-              self.handle_kamikaze_stats(killer_name)
+            if killer_name != stats['DATA']['VICTIM']['NAME']:
+              if killer_name not in self.kill_streak[weapon]:
+                self.kill_streak[weapon][killer_name] = 1
+              else:
+                self.kill_streak[weapon][killer_name] += 1
 
-    if stats['TYPE'] == "PLAYER_STATS":
-      #these stats come at end of game after MATCH_REPORT for each player
-      if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0:
-        if stats['DATA']['PLAY_TIME'] >= 120:
-          player_name = stats['DATA']['NAME']
+              if self.kill_streak[weapon][killer_name] == 1:
+                self.handle_kill_streak(killer_name, weapon)
+          elif stats['TYPE'] == "PLAYER_KILL" and stats['DATA']['MOD'] == "KAMIKAZE":
+            killer_name = stats['DATA']['KILLER']['NAME']
+            if killer_name != stats['DATA']['VICTIM']['NAME']:
+              if killer_name not in self.kamikaze_stats:
+                self.kamikaze_stats[killer_name] = 1
+              else:
+                self.kamikaze_stats[killer_name] += 1
 
-          #player accuracies (sent to each player in tell)
-          if stats['DATA']['STEAM_ID'] != "0": #skip bots
+              if self.kamikaze_stats[killer_name] == 1:
+                self.handle_kamikaze_stats(killer_name)
+
+      if stats['TYPE'] == "PLAYER_STATS":
+        #these stats come at end of game after MATCH_REPORT for each player
+        if stats['DATA']['QUIT'] == 0 and stats['DATA']['WARMUP'] == 0:
+          if stats['DATA']['PLAY_TIME'] >= 120:
+            player_name = stats['DATA']['NAME']
+
+            #player accuracies (sent to each player in tell)
             player = self.player(int(stats['DATA']['STEAM_ID']))
             #dont show if player is in spec, also handle multiple output bug as well
             if player.team != "spectator" and player.steam_id not in self.outputted_accuracy_players:
@@ -163,123 +163,123 @@ class uberstats(minqlx.Plugin):
               player.tell(accuracy_output)
               self.outputted_accuracy_players.append(player.steam_id)
 
-          player_kpm = stats['DATA']['KILLS'] / (stats['DATA']['PLAY_TIME'] / 60)
+            player_kpm = stats['DATA']['KILLS'] / (stats['DATA']['PLAY_TIME'] / 60)
 
-          if stats['DATA']['DEATHS'] != 0: #we don't want to divide by 0!
-            player_kd = stats['DATA']['KILLS'] / stats['DATA']['DEATHS']
-          else:
-            player_kd = stats['DATA']['KILLS']
+            if stats['DATA']['DEATHS'] != 0: #we don't want to divide by 0!
+              player_kd = stats['DATA']['KILLS'] / stats['DATA']['DEATHS']
+            else:
+              player_kd = stats['DATA']['KILLS']
 
-          player_dmg = stats['DATA']['DAMAGE']['DEALT']
-          player_longest_spree = stats['DATA']['MAX_STREAK']
+            player_dmg = stats['DATA']['DAMAGE']['DEALT']
+            player_longest_spree = stats['DATA']['MAX_STREAK']
 
-          player_rail_hits = 0
-          player_rail_shots = 0
+            player_rail_hits = 0
+            player_rail_shots = 0
 
-          if stats['DATA']['WEAPONS']['RAILGUN']['S'] >= 15:
-            player_rail_hits = stats['DATA']['WEAPONS']['RAILGUN']['H']
-            player_rail_shots = stats['DATA']['WEAPONS']['RAILGUN']['S']
-            player_rail_accuracy = 100 * (player_rail_hits / player_rail_shots)
-          else:
-            player_rail_accuracy = 0
+            if stats['DATA']['WEAPONS']['RAILGUN']['S'] >= 15:
+              player_rail_hits = stats['DATA']['WEAPONS']['RAILGUN']['H']
+              player_rail_shots = stats['DATA']['WEAPONS']['RAILGUN']['S']
+              player_rail_accuracy = 100 * (player_rail_hits / player_rail_shots)
+            else:
+              player_rail_accuracy = 0
 
-          player_nade_kills = stats['DATA']['WEAPONS']['GRENADE']['K']
-          player_pummels = stats['DATA']['WEAPONS']['GAUNTLET']['K']
-          player_dmg_taken = stats['DATA']['DAMAGE']['TAKEN']
+            player_nade_kills = stats['DATA']['WEAPONS']['GRENADE']['K']
+            player_pummels = stats['DATA']['WEAPONS']['GAUNTLET']['K']
+            player_dmg_taken = stats['DATA']['DAMAGE']['TAKEN']
 
-          player_dmg_per_kill = 0
-          if stats['DATA']['KILLS'] > 0: #we don't want to divide by 0!
-            player_dmg_per_kill = stats['DATA']['DAMAGE']['DEALT'] / stats['DATA']['KILLS']
+            player_dmg_per_kill = 0
+            if stats['DATA']['KILLS'] > 0: #we don't want to divide by 0!
+              player_dmg_per_kill = stats['DATA']['DAMAGE']['DEALT'] / stats['DATA']['KILLS']
 
-          if not self.best_kpm_names:
-            self.best_kpm_names = [player_name]
-            self.best_kpm = player_kpm
-          elif player_kpm > self.best_kpm:
-            self.best_kpm_names = [player_name]
-            self.best_kpm = player_kpm
-          elif player_kpm == self.best_kpm:
-            self.best_kpm_names.append(player_name)
+            if not self.best_kpm_names:
+              self.best_kpm_names = [player_name]
+              self.best_kpm = player_kpm
+            elif player_kpm > self.best_kpm:
+              self.best_kpm_names = [player_name]
+              self.best_kpm = player_kpm
+            elif player_kpm == self.best_kpm:
+              self.best_kpm_names.append(player_name)
 
-          if not self.best_kd_names:
-            self.best_kd_names = [player_name]
-            self.best_kd = player_kd
-          elif player_kd > self.best_kd:
-            self.best_kd_names = [player_name]
-            self.best_kd = player_kd
-          elif player_kd == self.best_kd:
-            self.best_kd_names.append(player_name)
+            if not self.best_kd_names:
+              self.best_kd_names = [player_name]
+              self.best_kd = player_kd
+            elif player_kd > self.best_kd:
+              self.best_kd_names = [player_name]
+              self.best_kd = player_kd
+            elif player_kd == self.best_kd:
+              self.best_kd_names.append(player_name)
 
-          if not self.most_damage_names:
-            self.most_damage_names = [player_name]
-            self.most_damage = player_dmg
-          elif player_dmg > self.most_damage:
-            self.most_damage_names = [player_name]
-            self.most_damage = player_dmg
-          elif player_dmg == self.most_damage:
-            self.most_damage_names.append(player_name)
+            if not self.most_damage_names:
+              self.most_damage_names = [player_name]
+              self.most_damage = player_dmg
+            elif player_dmg > self.most_damage:
+              self.most_damage_names = [player_name]
+              self.most_damage = player_dmg
+            elif player_dmg == self.most_damage:
+              self.most_damage_names.append(player_name)
 
-          if not self.longest_spree:
-            self.longest_spree_names = [player_name]
-            self.longest_spree = player_longest_spree
-          elif player_longest_spree > self.longest_spree:
-            self.longest_spree_names = [player_name]
-            self.longest_spree = player_longest_spree
-          elif player_longest_spree == self.longest_spree:
-            self.longest_spree_names.append(player_name)
+            if not self.longest_spree:
+              self.longest_spree_names = [player_name]
+              self.longest_spree = player_longest_spree
+            elif player_longest_spree > self.longest_spree:
+              self.longest_spree_names = [player_name]
+              self.longest_spree = player_longest_spree
+            elif player_longest_spree == self.longest_spree:
+              self.longest_spree_names.append(player_name)
 
-          if not self.best_rail_accuracy_names:
-            self.best_rail_accuracy_names = [player_name]
-            self.best_rail_accuracy = player_rail_accuracy
-            self.best_rail_hits = player_rail_hits
-            self.best_rail_shots = player_rail_shots
-          elif player_rail_accuracy > self.best_rail_accuracy:
-            self.best_rail_accuracy_names = [player_name]
-            self.best_rail_accuracy = player_rail_accuracy
-            self.best_rail_hits = player_rail_hits
-            self.best_rail_shots = player_rail_shots
-          elif player_rail_accuracy == self.best_rail_accuracy:
-            self.best_rail_accuracy_names.append(player_name)
+            if not self.best_rail_accuracy_names:
+              self.best_rail_accuracy_names = [player_name]
+              self.best_rail_accuracy = player_rail_accuracy
+              self.best_rail_hits = player_rail_hits
+              self.best_rail_shots = player_rail_shots
+            elif player_rail_accuracy > self.best_rail_accuracy:
+              self.best_rail_accuracy_names = [player_name]
+              self.best_rail_accuracy = player_rail_accuracy
+              self.best_rail_hits = player_rail_hits
+              self.best_rail_shots = player_rail_shots
+            elif player_rail_accuracy == self.best_rail_accuracy:
+              self.best_rail_accuracy_names.append(player_name)
 
-          if not self.most_nade_kills_names:
-            self.most_nade_kills_names = [player_name]
-            self.most_nade_kills = player_nade_kills
-          elif player_nade_kills > self.most_nade_kills:
-            self.most_nade_kills_names = [player_name]
-            self.most_nade_kills = player_nade_kills
-          elif player_nade_kills == self.most_nade_kills:
-            self.most_nade_kills_names.append(player_name)
+            if not self.most_nade_kills_names:
+              self.most_nade_kills_names = [player_name]
+              self.most_nade_kills = player_nade_kills
+            elif player_nade_kills > self.most_nade_kills:
+              self.most_nade_kills_names = [player_name]
+              self.most_nade_kills = player_nade_kills
+            elif player_nade_kills == self.most_nade_kills:
+              self.most_nade_kills_names.append(player_name)
 
-          if not self.most_pummels_names:
-            self.most_pummels_names = [player_name]
-            self.most_pummels = player_pummels
-          elif player_pummels > self.most_pummels:
-            self.most_pummels_names = [player_name]
-            self.most_pummels = player_pummels
-          elif player_pummels == self.most_pummels:
-            self.most_pummels_names.append(player_name)
+            if not self.most_pummels_names:
+              self.most_pummels_names = [player_name]
+              self.most_pummels = player_pummels
+            elif player_pummels > self.most_pummels:
+              self.most_pummels_names = [player_name]
+              self.most_pummels = player_pummels
+            elif player_pummels == self.most_pummels:
+              self.most_pummels_names.append(player_name)
 
-          if not self.most_dmg_taken_names:
-            self.most_dmg_taken_names = [player_name]
-            self.most_dmg_taken = player_dmg_taken
-          elif player_dmg_taken > self.most_dmg_taken:
-            self.most_dmg_taken_names = [player_name]
-            self.most_dmg_taken = player_dmg_taken
-          elif player_dmg_taken == self.most_dmg_taken:
-            self.most_dmg_taken_names.append(player_name)
+            if not self.most_dmg_taken_names:
+              self.most_dmg_taken_names = [player_name]
+              self.most_dmg_taken = player_dmg_taken
+            elif player_dmg_taken > self.most_dmg_taken:
+              self.most_dmg_taken_names = [player_name]
+              self.most_dmg_taken = player_dmg_taken
+            elif player_dmg_taken == self.most_dmg_taken:
+              self.most_dmg_taken_names.append(player_name)
 
-          if not self.most_dmg_per_kill_names:
-            self.most_dmg_per_kill_names = [player_name]
-            self.most_dmg_per_kill = player_dmg_per_kill
-          elif player_dmg_per_kill > self.most_dmg_per_kill:
-            self.most_dmg_per_kill_names = [player_name]
-            self.most_dmg_per_kill = player_dmg_per_kill
-          elif player_dmg_per_kill == self.most_dmg_per_kill:
-            self.most_dmg_per_kill_names.append(player_name)
+            if not self.most_dmg_per_kill_names:
+              self.most_dmg_per_kill_names = [player_name]
+              self.most_dmg_per_kill = player_dmg_per_kill
+            elif player_dmg_per_kill > self.most_dmg_per_kill:
+              self.most_dmg_per_kill_names = [player_name]
+              self.most_dmg_per_kill = player_dmg_per_kill
+            elif player_dmg_per_kill == self.most_dmg_per_kill:
+              self.most_dmg_per_kill_names.append(player_name)
 
   @minqlx.delay(2)
   @minqlx.thread
   def handle_game_end(self, data):
-    if not data["ABORTED"]:
+    if not data["ABORTED"] and self.best_kpm:
       self.msg("^5***UBERSTATS***")
       stats_output = "^1KILL MACHINE: "
       record_response = ""
@@ -508,8 +508,8 @@ class uberstats(minqlx.Plugin):
     self.high_scores("triggered")
 
   @minqlx.thread
-  def high_scores(self, method):
-    if method == "triggered":
+  def high_scores(self, method):    
+    if method == "triggered" and float(self.db.get(RECORDS_KEY.format("kill_machine") + ":high_score")) is not None:      
       self.msg("^5***UBERSTATS HIGH SCORES***")
     elif method == "endgame":
       html = "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>\n" + \
