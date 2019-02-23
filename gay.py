@@ -7,9 +7,6 @@ class gay(minqlx.Plugin):
         self.add_command("gay", self.cmd_gay)
         self.add_command("gayall", self.cmd_gayall, 5)
         self.add_command("straight", self.cmd_straight)
-        self.add_command("straightall", self.cmd_straightall, 5)
-        self.add_command("kill", self.cmd_kill)
-        self.add_command("killall", self.cmd_killall, 5)
 
     def cmd_gay(self, player, msg, channel):
         self.callvote('qlx !gayall', "make everyone gay")
