@@ -3,6 +3,8 @@ import time
 import os
 import pysftp
 import re
+from collections import namedtuple
+from cgi import escape as html_escape
 
 RECORDS_KEY = "minqlx:uberstats_records:{}"
 WEAPON_RECORDS = {
@@ -15,9 +17,27 @@ WEAPON_RECORDS = {
                     "most_pummels": ["PUMMEL LORD", "{} pummels"],
                     "most_dmg_taken": ["BIGGEST PINCUSHION", "{:,} dmg taken"],
                     "most_world_deaths": ["CLUMSIEST FOOL", "{:,} deaths by world"],
-                    "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"]
+                    "most_dmg_per_kill": ["GOOD SAMARITAN", "{:0.2f} damage per frag"],
+                    "most_lines_of_chat": ["BIGGEST CHATTERBOX", "{} lines of chat"]
                   }
 FILE_PATTERN = re.compile('[\W_]+')
+
+# Hex-colored spans for decimal color codes ^0 - ^9
+_dec_spans = [
+ '<span style="color: rgb(128,128,128);">',
+ '<span style="color: rgb(255, 0, 0);">',
+ '<span style="color: rgb(51, 255, 0);">',
+ '<span style="color: rgb(255, 255, 0);">',
+ '<span style="color: rgb(51,102,255);">',
+ '<span style="color: rgb(51,255,255);">',
+ '<span style="color: rgb(197,0,255);">',
+ '<span style="color: rgb(255,255,255);">',
+ '<span style="color: rgb(255,255,255);">',
+ '<span style="color: rgb(255,255,255);">'
+]
+# Color code patterns
+_dec_colors = re.compile(r'\^(\d)')
+_all_colors = _dec_colors
 
 class uberstats(minqlx.Plugin):
 
@@ -37,6 +57,7 @@ class uberstats(minqlx.Plugin):
     self.add_command("clearhighscores", self.cmd_clear_highscores, 5)
 
     self.add_hook("stats", self.handle_stats)
+    self.add_hook("chat", self.handle_chat)
     self.add_hook("map", self.handle_map)
     self.add_hook("game_end", self.handle_game_end)
 
@@ -83,6 +104,10 @@ class uberstats(minqlx.Plugin):
     self.most_dmg_per_kill_names = []
     self.most_dmg_per_kill = 0
 
+    self.most_lines_of_chat_stats = {}
+    self.most_lines_of_chat_names = []
+    self.most_lines_of_chat = 0
+
   def cmd_score(self, player, msg, channel):
     if player.team != "spectator":
       sorted_players = sorted(self.players(), key = lambda p: p.stats.score, reverse=True)
@@ -96,6 +121,14 @@ class uberstats(minqlx.Plugin):
         player.stats.ping
       )
       )
+
+  def handle_chat(self, player, msg, channel):
+    if self.game is not None:
+      if self.game.state == "in_progress" and channel == "chat" and str(player.steam_id)[:1] != "9":
+        if player.name not in self.most_lines_of_chat_stats:
+          self.most_lines_of_chat_stats[player.name] = 1
+        else:
+          self.most_lines_of_chat_stats[player.name] += 1
 
   def handle_stats(self, stats):
     if self.game is not None:
@@ -405,6 +438,27 @@ class uberstats(minqlx.Plugin):
         stats_output += "^2 - {:0.2f} damage per frag".format(self.most_dmg_per_kill)
         self.msg(record_response + stats_output)
 
+      stats_output = "^6BIGGEST CHATTERBOX: "
+      record_response = ""
+      for name, lines_of_chat in self.most_lines_of_chat_stats.items():
+        if not self.most_lines_of_chat_names:
+          self.most_lines_of_chat_names = [name]
+          self.most_lines_of_chat = lines_of_chat
+        elif lines_of_chat > self.most_lines_of_chat:
+          self.most_lines_of_chat_names = [name]
+          self.most_lines_of_chat = lines_of_chat
+        elif lines_of_chat == self.most_lines_of_chat:
+          self.most_lines_of_chat_names.append(name)
+
+      if self.most_lines_of_chat > 0:
+        for i, player_name in enumerate(self.most_lines_of_chat_names):
+          record_response = self.check_record("most_lines_of_chat", float(self.most_lines_of_chat), player_name)
+          stats_output += "^7" + player_name
+          if len(self.most_world_deaths_names) > 1 and len(self.most_lines_of_chat_names) - 1 != i:
+            stats_output += ", "
+        stats_output += "^2 - {} lines of chat".format(self.most_lines_of_chat)
+        self.msg(record_response + stats_output)
+
       if self.sftp_hostname:
         self.high_scores("endgame")
 
@@ -458,6 +512,10 @@ class uberstats(minqlx.Plugin):
     self.most_dmg_per_kill_names = []
     self.most_dmg_per_kill = 0
 
+    self.most_lines_of_chat_stats = {}
+    self.most_lines_of_chat_names = []
+    self.most_lines_of_chat = 0
+
     self.kamikaze_stats = {}
     for weapon in self.weapons:
       self.kill_streak[weapon] = {}
@@ -465,26 +523,6 @@ class uberstats(minqlx.Plugin):
     self.outputted_accuracy_players = []
 
     self.high_scores("triggered")
-
-  def ordinal(self, value):
-    try:
-      value = int(value)
-    except ValueError:
-      return value
-
-    if value % 100//10 != 1:
-      if value % 10 == 1:
-        ordval = u"%d%s" % (value, "st")
-      elif value % 10 == 2:
-        ordval = u"%d%s" % (value, "nd")
-      elif value % 10 == 3:
-        ordval = u"%d%s" % (value, "rd")
-      else:
-        ordval = u"%d%s" % (value, "th")
-    else:
-      ordval = u"%d%s" % (value, "th")
-
-    return ordval
 
   def check_record(self, record_name, score, player_name):
     current_record = self.db.get(RECORDS_KEY.format(record_name) + ":high_score")
@@ -510,7 +548,7 @@ class uberstats(minqlx.Plugin):
     self.high_scores("triggered")
 
   @minqlx.thread
-  def high_scores(self, method):    
+  def high_scores(self, method):
     if method == "triggered" and self.db.get(RECORDS_KEY.format("kill_machine") + ":high_score") is not None:
       self.msg("^5***UBERSTATS HIGH SCORES***")
     elif method == "endgame":
@@ -525,8 +563,12 @@ class uberstats(minqlx.Plugin):
         if method == "triggered":
           self.msg("^1{} - ^7{} ^2- {}".format(val[0], players, val[1].format(float(high_score))).replace(".00", "").replace(".0", ""))
         elif method == "endgame":
+          players_html = []
+          for player in self.db.smembers(RECORDS_KEY.format(key) + ":players"):
+            players_html.append(self.html_colors(player))
+          players_html_final = ", ".join(players_html)
           html += "$('.{}_record').text('{}');\n".format(key, val[1].format(float(high_score)).replace(".00", "").replace(".0", ""))
-          html += "$('.{}_players').text('{}');\n\n".format(key, players)
+          html += "$('.{}_players').html('{}');\n\n".format(key, players_html_final)
 
     if method == "endgame":
       html += "});\n</script>"
@@ -545,3 +587,38 @@ class uberstats(minqlx.Plugin):
     for key, val in WEAPON_RECORDS.items():
       self.db.delete(RECORDS_KEY.format(key) + ":players")
       self.db.delete(RECORDS_KEY.format(key) + ":high_score")
+
+  #UTILITY FUNCTIONS
+
+  def ordinal(self, value):
+    try:
+      value = int(value)
+    except ValueError:
+      return value
+
+    if value % 100//10 != 1:
+      if value % 10 == 1:
+        ordval = u"%d%s" % (value, "st")
+      elif value % 10 == 2:
+        ordval = u"%d%s" % (value, "nd")
+      elif value % 10 == 3:
+        ordval = u"%d%s" % (value, "rd")
+      else:
+        ordval = u"%d%s" % (value, "th")
+    else:
+      ordval = u"%d%s" % (value, "th")
+
+    return ordval
+
+  def html_colors(self, qstr='', limit=None):
+    if not qstr or qstr == "":
+      return "";
+    if len(qstr) > 0:
+      qstr = "^7" + qstr
+    #qstr = html_escape(qstr)
+
+    html = _dec_colors.sub(lambda match: _dec_spans[int(match.group(1))], qstr)
+    return html + "</span>" * len(_all_colors.findall(qstr))
+
+
+
