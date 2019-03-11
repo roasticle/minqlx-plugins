@@ -3,8 +3,7 @@ import time
 import os
 import pysftp
 import re
-from collections import namedtuple
-from cgi import escape as html_escape
+import io
 
 RECORDS_KEY = "minqlx:uberstats_records:{}"
 WEAPON_RECORDS = {
@@ -53,7 +52,7 @@ class uberstats(minqlx.Plugin):
     self.sftp_remote_path = self.get_cvar("qlx_uberstats_sftp_remote_path")
 
     self.add_command("score", self.cmd_score)
-    self.add_command("highscores", self.cmd_highscores)
+    self.add_command("highscores", self.cmd_highscores)    
     self.add_command("clearhighscores", self.cmd_clear_highscores, 5)
 
     self.add_hook("stats", self.handle_stats)
@@ -574,8 +573,11 @@ class uberstats(minqlx.Plugin):
       html += "});\n</script>"
       #make nice filename from hostname
       uberfilename = re.sub(' +', '_', (re.sub("[^a-zA-Z.\d\s]", "", self.game.hostname) + "-uberstats.html").lower())
-      f = open(uberfilename, "w+")
-      f.write(html)
+      #f = open(uberfilename, "w+")
+      #self.msg(html)
+      with io.open(uberfilename, 'w', encoding='utf8') as f:
+        f.write(html)
+      #f.write(html)
       f.close()
       cnopts = pysftp.CnOpts()
       cnopts.hostkeys = None
@@ -615,7 +617,6 @@ class uberstats(minqlx.Plugin):
       return "";
     if len(qstr) > 0:
       qstr = "^7" + qstr
-    #qstr = html_escape(qstr)
 
     html = _dec_colors.sub(lambda match: _dec_spans[int(match.group(1))], qstr)
     return html + "</span>" * len(_all_colors.findall(qstr))
