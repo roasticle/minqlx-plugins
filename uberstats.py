@@ -573,11 +573,8 @@ class uberstats(minqlx.Plugin):
       html += "});\n</script>"
       #make nice filename from hostname
       uberfilename = re.sub(' +', '_', (re.sub("[^a-zA-Z.\d\s]", "", self.game.hostname) + "-uberstats.html").lower())
-      #f = open(uberfilename, "w+")
-      #self.msg(html)
       with io.open(uberfilename, 'w', encoding='utf8') as f:
         f.write(html)
-      #f.write(html)
       f.close()
       cnopts = pysftp.CnOpts()
       cnopts.hostkeys = None
