@@ -20,6 +20,15 @@
 <strong>fun.py</strong> - custom fun.py
 - requires Dark Fiber Sound Pack - https://steamcommunity.com/sharedfiles/filedetails/?id=830745553 (add 830745553 to your servers workshop.txt and qlx_workshopReferences in server.cfg
 
+<strong>funstuff.py</strong> - various fun vote functions
+- !slaphappy <id or "everyone"> number_of_slaps frequency_in_seconds damage (damage is optional)
+- !hulk <id or "everyone"> - gives player(s) massive amounts of hp, armor and powerups
+- !rename <id or "everyone"> name_to_rename_to
+- !gay - makes everyones name gay
+- !straight - makes everyones name straight
+- !purgatory <id or "everyone"> - sends player(s) off map
+- !kill - kill everyone
+
 <strong>gungames.py</strong> - custom voting triggers for gungames factories
 - this REQUIRES workshop item: http://steamcommunity.com/sharedfiles/filedetails/?id=862639717
 - if vote passes will reload current map with voted factory
@@ -60,9 +69,6 @@
 - !qltv to toggle
 
 <strong>ragespec.py</strong> - !ragespec to...ragespec!
-
-<strong>slaphappy.py</strong> - spam slap pesky players!
-- usage: !slaphappy id number_of_slaps frequency_in_seconds damage (damage is optional)
 
 <strong>uberstats.py</strong> - various awards and stats added during and endgame
 - !score for your scoreboard placement (when you are below the scoreboard during game)
